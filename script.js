@@ -15,3 +15,29 @@
   },{rootMargin:'-130px 0px -70% 0px'});
   document.querySelectorAll('.cat').forEach(function(s){io.observe(s);});
 })();
+
+(function(){
+  var btn=document.getElementById('shareBtn'),msg=document.getElementById('shareMsg');
+  if(!btn)return;
+  var url='https://leventbiyiklioglu.github.io/senocak-cafe/';
+  var data={title:'Şenocak Cafe',text:'Şenocak Cafe - menü ve bilgiler',url:url};
+  var t;
+  function say(m){msg.textContent=m;clearTimeout(t);t=setTimeout(function(){msg.textContent='';},3000);}
+  function fallback(){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){say('Bağlantı kopyalandı ✓');},legacy);
+    }else legacy();
+  }
+  function legacy(){
+    var ta=document.createElement('textarea');ta.value=url;ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;opacity:0;top:0;left:0';document.body.appendChild(ta);ta.select();
+    var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);
+    say(ok?'Bağlantı kopyalandı ✓':'Kopyalanamadı, adresi elle kopyalayın: '+url);
+  }
+  btn.addEventListener('click',function(){
+    if(navigator.share){
+      navigator.share(data).catch(function(e){if(e&&e.name!=='AbortError')fallback();});
+    }else fallback();
+  });
+})();

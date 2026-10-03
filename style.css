@@ -62,6 +62,13 @@ a{color:var(--terra-d)}
 .small{font-size:.8rem;color:#7a604c}
 footer{text-align:center;padding:26px 18px;color:var(--coffee);font-size:.9rem}
 .fab{position:fixed;right:14px;bottom:14px;z-index:30;background:var(--terra);color:#fff;text-decoration:none;font-weight:800;padding:13px 20px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.share-wrap{padding-top:10px;padding-bottom:30px}
+.share-band{text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:26px 18px;box-shadow:0 4px 14px rgba(107,66,38,.06)}
+.share-band h3{font-size:1.4rem}.share-band p{margin:6px 0 16px;color:var(--coffee)}
+.share-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn-light{background:var(--brown);border-color:var(--brown);box-shadow:none;font:inherit;font-weight:800;cursor:pointer;color:#fff}
+.btn-light:hover{background:var(--terra);border-color:var(--terra)}
+.share-band .share-msg{margin:12px 0 0;min-height:1.4em;font-weight:700;color:var(--sage)}
 @media(min-width:700px){
  .links{display:flex}
  .items{grid-template-columns:1fr 1fr}
