@@ -19,7 +19,7 @@
 (function(){
   var btn=document.getElementById('shareBtn'),msg=document.getElementById('shareMsg');
   if(!btn)return;
-  var url='https://leventbiyiklioglu.github.io/senocak-cafe/';
+  var url='https://senocakcafe.com/';
   var data={title:'Şenocak Cafe',text:'Şenocak Cafe - menü ve bilgiler',url:url};
   var t;
   function say(m){msg.textContent=m;clearTimeout(t);t=setTimeout(function(){msg.textContent='';},3000);}
