@@ -79,3 +79,4 @@ footer{text-align:center;padding:26px 18px;color:var(--coffee);font-size:.9rem}
  .fab{display:none}body{padding-bottom:0}
 }
 @media(prefers-reduced-motion:reduce){.deco span{animation:none}html{scroll-behavior:auto}}
+.gram{font-weight:700;color:var(--coffee)}
