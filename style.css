@@ -84,3 +84,8 @@ footer{text-align:center;padding:26px 18px;color:var(--coffee);font-size:.9rem}
 @media(prefers-reduced-motion:reduce){.deco span{animation:none}html{scroll-behavior:auto}}
 .gram{font-weight:700;color:var(--coffee)}
 .hero .deco{display:none}
+/* SSS */
+
+.sss-item{background:#fff;border-radius:14px;padding:14px 18px;margin-bottom:10px;box-shadow:0 2px 10px rgba(59,36,24,.08)}
+.sss-item summary{cursor:pointer;font-weight:700;color:var(--coffee)}
+.sss-item p{margin:10px 0 0;line-height:1.6}
