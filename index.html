@@ -78,7 +78,7 @@
   "@type": "OrderAction",
   "target": {
    "@type": "EntryPoint",
-   "urlTemplate": "https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe",
+   "urlTemplate": "https://senocakcafe.com/#sepet",
    "actionPlatform": [
     "http://schema.org/DesktopWebPlatform",
     "http://schema.org/MobileWebPlatform"
@@ -135,12 +135,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=20261023a">
+<link rel="stylesheet" href="sepet.css?v=20261029a">
 </head>
 <body>
 <header class="topbar" id="top">
   <a class="brand" href="#top">☕ Şenocak Cafe</a>
   <nav class="links"><a href="#menu">Menü</a><a href="#hakkimizda">Hakkımızda</a><a href="#iletisim">İletişim</a></nav>
-  <a class="btn btn-sm" href="https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe" target="_blank" rel="noopener">Online Sipariş</a>
+  <a class="btn btn-sm" href="#sepet" data-sepet-ac aria-controls="spDrawer">Online Sipariş</a>
 </header>
 
 <section class="hero">
@@ -154,7 +155,7 @@
     <h1>Şenocak Cafe</h1>
     <p class="tagline">Taptaze kahvaltılar, çıtır tostlar ve ev usulü lezzetler — sıcak sıcak, sevgiyle.</p>
     <div class="cta">
-      <a class="btn" href="https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe" target="_blank" rel="noopener">🛵 Online Sipariş</a>
+      <a class="btn" href="#sepet" data-sepet-ac aria-controls="spDrawer">🛵 Online Sipariş</a>
       <a class="btn btn-ghost" href="#menu">Menüyü Gör</a>
     </div>
     <ul class="badges">
@@ -282,8 +283,8 @@
 <li><div class="it"><h4>Coca-Cola (1 L.)</h4><p>Pet şişe</p></div><span class="dots"></span><span class="price">99 ₺</span></li>
 </ul></section>
 
-  <div class="order-band"><h3>Canımız bir şey çekti? 😋</h3><p>Tüm menüyü Yemeksepeti üzerinden kolayca sipariş edin.</p>
-  <a class="btn" href="https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe" target="_blank" rel="noopener">Online Sipariş Ver</a></div>
+  <div class="order-band"><h3>Canımız bir şey çekti? 😋</h3><p>Tüm menüyü buradan kolayca sipariş edin.</p>
+  <a class="btn" href="#sepet" data-sepet-ac aria-controls="spDrawer">Online Sipariş</a></div>
 </section>
 
 <section id="hakkimizda" class="about">
@@ -305,8 +306,8 @@
     <div class="box"><h3>🕘 Çalışma Saatleri</h3>
     <table><tr><td>Pazartesi – Pazar</td><td>09:00 – 19:00</td></tr></table></div>
     <div class="box"><h3>📞 Telefon</h3><p><a href="tel:+902128857039">0212 885 70 39</a><br><a href="tel:+905357430626">0535 743 06 26</a></p></div>
-    <div class="box"><h3>🛵 Sipariş</h3><p>Yemeksepeti üzerinden gel-al veya adrese teslim sipariş verebilirsiniz.</p>
-    <a class="btn btn-sm" href="https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe" target="_blank" rel="noopener">Online Sipariş</a></div>
+    <div class="box"><h3>🛵 Sipariş</h3><p>Online Sipariş düğmesiyle adrese teslim sipariş verebilirsiniz.</p>
+    <a class="btn btn-sm" href="#sepet" data-sepet-ac aria-controls="spDrawer">Online Sipariş</a></div>
   </div>
 </section>
 <section id="sss" class="wrap sss">
@@ -331,7 +332,8 @@
 
 <footer><p>© <span id="yil">2026</span> Şenocak Cafe · Kumburgaz, İstanbul</p></footer>
 
-<a class="fab" href="https://www.yemeksepeti.com/restaurant/x46h/senocak-cafe" target="_blank" rel="noopener" aria-label="Online Sipariş">🛵 Online Sipariş</a>
+<a class="fab" href="#sepet" data-sepet-ac aria-controls="spDrawer" aria-label="Online Sipariş">🛵 Online Sipariş</a>
 <script src="script.js"></script>
+<script src="sepet.js?v=20261029a"></script>
 </body>
 </html>
