@@ -1,4 +1,4 @@
-:root{--cream:#fbf4e8;--paper:#fffaf1;--brown:#3b2418;--coffee:#6b4226;--terra:#c8562b;--terra-d:#a8431f;--gold:#e0a53a;--sage:#6f7f54;--line:#e7d8c0;--r:16px}
+:root{--cream:#fbf4e8;--paper:#fffaf1;--brown:#3b2418;--coffee:#6b4226;--terra:#b84e26;--terra-d:#a8431f;--gold:#e0a53a;--sage:#647349;--line:#e7d8c0;--r:16px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:120px}
 body{font-family:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--cream);color:var(--brown);line-height:1.55;font-size:16px;padding-bottom:70px}
@@ -53,7 +53,7 @@ a{color:var(--terra-d)}
 .about{background:var(--brown);color:#f6e6cc}
 .about .wrap{padding-top:60px;padding-bottom:60px}
 .about .two{display:grid;gap:30px}
-.about h2{color:#fff}.about p{margin-top:12px}
+.about .eyebrow{color:var(--gold)}.about h2{color:#fff}.about p{margin-top:12px}
 .cards{display:grid;gap:12px}
 .card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r);padding:16px;display:grid;gap:2px;font-size:1.8rem}
 .card b{font-size:1.05rem;color:#fff}.card span{font-size:.88rem;color:#e9d3b0}
