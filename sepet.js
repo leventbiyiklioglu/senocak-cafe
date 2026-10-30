@@ -5,8 +5,7 @@
 'use strict';
 var CFG={
   waNumber:'902128857039',
-  // YER TUTUCU: Worker dağıtılınca doldurun, örn. 'https://fis.senocakcafe.com/siparis'. Boşken sunucuya HİÇ istek gitmez.
-  FIS_SUNUCU_URL:'https://senocak-fis.diojen.workers.dev/siparis',
+  FIS_SUNUCU_URL:'https://fis.diojennews.com/siparis',
   cafe:{lat:41.03898,lng:28.430606},
   openH:9, closeH:19, tz:'Europe/Istanbul',
   zones:[{max:2,min:300,label:'0–2 km'},{max:5,min:650,label:'2–5 km'},{max:7,min:800,label:'5–7 km'},
