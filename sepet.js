@@ -1,9 +1,12 @@
-/* Şenocak Cafe – Sepet → WhatsApp. Sunucuya hiçbir şey gönderilmez,
-   hiçbir şey kaydedilmez (localStorage/sessionStorage/çerez YOK). Her şey bellekte. */
+/* Şenocak Cafe – Sepet → WhatsApp (+ isteğe bağlı fiş aktarım sunucusu).
+   Tarayıcıda hiçbir şey kaydedilmez (localStorage/sessionStorage/çerez YOK). Her şey bellekte.
+   FIS_SUNUCU_URL doluysa sipariş kopyası arka planda geçici aktarım sunucusuna gider (fiş basılınca/en geç 3 saatte silinir). */
 (function(root){
 'use strict';
 var CFG={
   waNumber:'902128857039',
+  // YER TUTUCU: Worker dağıtılınca doldurun, örn. 'https://fis.senocakcafe.com/siparis'. Boşken sunucuya HİÇ istek gitmez.
+  FIS_SUNUCU_URL:'https://senocak-fis.diojen.workers.dev/siparis',
   cafe:{lat:41.03898,lng:28.430606},
   openH:9, closeH:19, tz:'Europe/Istanbul',
   zones:[{max:2,min:300,label:'0–2 km'},{max:5,min:650,label:'2–5 km'},{max:7,min:800,label:'5–7 km'},
@@ -45,7 +48,28 @@ function buildMessage(st){
   if(st.shareLoc&&st.loc)L.push('Konum: https://www.google.com/maps/search/?api=1&query='+st.loc.lat.toFixed(6)+','+st.loc.lng.toFixed(6));
   return L.join('\n');}
 function waUrl(st){return 'https://wa.me/'+CFG.waNumber+'?text='+encodeURIComponent(buildMessage(st));}
-var API={CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
+function pad2(n){return (n<10?'0':'')+n;}
+function fisVeri(st,tuzak){ // worker.js gecerli() biçimi (FIS_VERI)
+  var d=st.now||new Date(),p=new Intl.DateTimeFormat('en-GB',{timeZone:CFG.tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),g=function(t){return p.find(function(x){return x.type===t;}).value;};
+  return {tarih:g('day')+'.'+g('month')+'.'+g('year'),saat:pad2(+g('hour')%24)+':'+g('minute'),ad:String(st.name||'').trim(),tel:normPhone(st.phone)||'',adres:String(st.address||'').trim(),
+    kalemler:st.items.map(function(i){return {ad:i.name,adet:i.qty,kurus:i.kurus};}),not:String(st.note||'').trim(),
+    bolge:st.zone>=0&&CFG.zones[st.zone]?CFG.zones[st.zone].label:'-',km:st.km!=null?Math.round(st.km*10)/10:null,
+    konum:st.shareLoc&&st.loc?{lat:+st.loc.lat.toFixed(6),lng:+st.loc.lng.toFixed(6)}:null,tuzak:tuzak||''};}
+function fisGonderilsinMi(url,tuzak){return !!String(url||'').trim()&&!String(tuzak||'').trim();}
+/* Sunucuya kopya: hiçbir hata yukarı çıkmaz, hiçbir şey beklenmez. text/plain → CORS ön kontrolü (preflight) yok. */
+function fisGonder(st,tuzak,url,tasiyici){
+  url=url==null?CFG.FIS_SUNUCU_URL:url;
+  if(!fisGonderilsinMi(url,tuzak))return false;
+  try{var body=JSON.stringify(fisVeri(st,''));tasiyici=tasiyici||varsayilanTasiyici;var r=tasiyici(url,body);if(r&&typeof r.catch==='function')r.catch(function(){});return true;}catch(e){return false;}}
+function varsayilanTasiyici(url,body){
+  var n=typeof navigator!=='undefined'?navigator:null;
+  if(n&&n.sendBeacon&&typeof Blob!=='undefined'&&n.sendBeacon(url,new Blob([body],{type:'text/plain;charset=UTF-8'})))return;
+  if(typeof fetch!=='function')return;
+  var ac=typeof AbortController!=='undefined'?new AbortController():null;if(ac)setTimeout(function(){ac.abort();},3000);
+  return fetch(url,{method:'POST',body:body,keepalive:true,mode:'cors',credentials:'omit',headers:{'content-type':'text/plain;charset=UTF-8'},signal:ac?ac.signal:undefined});}
+/* Gönder tıklaması: önce (senkron) kopyayı tetikle, sonra WhatsApp URL'sini döndür — sunucu ne olursa olsun. */
+function gonderTikla(st,tuzak,url,tasiyici){fisGonder(st,tuzak,url,tasiyici);return waUrl(st);}
+var API={fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,gonderTikla:gonderTikla,CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
 if(typeof module!=='undefined'&&module.exports){module.exports=API;return;}
 
 /* ---------- Arayüz ---------- */
@@ -79,10 +103,12 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<fieldset><legend>Bilgileriniz</legend><label for="spName">Ad soyad *</label><input id="spName" autocomplete="name" required>'+
 '<label for="spPhone">Telefon *</label><input id="spPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>'+
 '<label for="spAddr">Açık adres *</label><textarea id="spAddr" rows="3" autocomplete="street-address" required></textarea>'+
-'<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2"></textarea></fieldset>'+
-'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Veri sorumlusu: Şenocak Cafe, Kamiloba Mah. İstanbul Cad. No:426A, Kumburgaz, Büyükçekmece/İstanbul. Telefon ve adresiniz yalnızca siparişinizin teslimi için WhatsApp mesajına eklenir; bu sitede veya bir sunucuda saklanmaz. Konumunuz yalnızca cihazınızda mesafe hesabı için kullanılır ve kaydedilmez; mesaja eklenmesi isteğe bağlıdır (kutucuk). Bilgiler WhatsApp\'a yalnızca siz onaylayıp gönderirseniz gider; WhatsApp\'ın kendi gizlilik koşulları geçerlidir.</p>'+
+'<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2"></textarea>'+
+'<div class="sp-hp" aria-hidden="true"><label for="spWeb">Web siteniz (boş bırakın)</label><input id="spWeb" name="website" type="text" tabindex="-1" autocomplete="off"></div></fieldset>'+
+'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Telefon ve adresiniz yalnızca siparişinizin teslimi için WhatsApp mesajına eklenir. Mutfakta fiş basılabilmesi için sipariş bilgileri geçici olarak bir aktarım sunucusundan da geçer; fiş basılınca hemen, basılamazsa en geç 3 saatte silinir. Site bilgilerinizi kalıcı olarak saklamaz. Konum eklemek isteğe bağlıdır. Ayrıntılar: Aydınlatma Metni.</p>'+
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
-'<ul id="spErr" class="sp-err" aria-live="polite"></ul><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a>'+
+'<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a><button type="button" id="spKvkkBtn" class="sp-btn sp-kvkk-btn" aria-expanded="false" aria-controls="spKvkk">📄 Aydınlatma Metni</button></div>'+
+'<div id="spKvkk" class="sp-kvkk sp-small" role="region" aria-labelledby="spKvkkT" tabindex="-1" hidden><h3 id="spKvkkT">Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni</h3><p><b>Veri sorumlusu:</b> Fatih Şenocak (şahıs işletmesi, Şenocak Cafe), Kamiloba Mah. İstanbul Cad. No:426A, Kumburgaz, Büyükçekmece/İstanbul. E-posta: <a href="mailto:senocakcafekamiloba@gmail.com">senocakcafekamiloba@gmail.com</a></p><p><b>İşlenen veriler:</b> Ad soyad, telefon, açık adres, sipariş içeriği ve varsa sipariş notu. Konumunuz yalnızca &quot;Konumumu WhatsApp mesajına ekle&quot; kutusunu işaretlerseniz mesaja eklenir; aksi hâlde yalnızca cihazınızda mesafe hesabı için kullanılır ve kaydedilmez.</p><p><b>Amaç ve hukuki sebep:</b> Siparişinizin alınması ve teslimi. Bu veriler, sözleşmenin kurulması ve ifası için gerekli olması hukuki sebebine (KVKK m.5/2-c) dayanılarak işlenir. Konum paylaşımı açık rızanıza dayanır; rızanızı vermemeniz siparişinizi engellemez.</p><p><b>Saklama ve aktarım:</b> Bu site bilgilerinizi kalıcı olarak saklamaz; tarayıcınızda da kayıt tutulmaz. Bilgiler, siz gönder dediğinizde WhatsApp (Meta) üzerinden işletmeye iletilir; bu sırada verilerin yurt dışına aktarımı söz konusu olabilir ve WhatsApp&#39;ın kendi gizlilik koşulları geçerlidir. Siparişinizin mutfakta fiş olarak basılabilmesi için sipariş bilgileriniz (ad, telefon, adres, sipariş içeriği, not, varsa konum) şifreli bağlantı ile Cloudflare, Inc. tarafından sağlanan bir aktarım sunucusuna da iletilir. Bu bilgiler fiş basıldığında hemen, basılamazsa en geç 3 saat içinde otomatik olarak silinir. Sunucuya yalnızca işletmemizin yazıcı programı erişebilir; kayıt/istatistik tutulmaz. Hizmet sağlayıcının sunucuları yurt dışında bulunabileceğinden verileriniz KVKK m.9 kapsamında yurt dışına aktarılmış olabilir. Sipariş sohbetleri teslimattan sonra 30 gün saklanır. Fatura ve muhasebe belgeleri ayrıca, yasal süreler boyunca saklanır.</p><p><b>Haklarınız:</b> KVKK m.11 kapsamındaki haklarınız (verilerinizin işlenip işlenmediğini öğrenme, bilgi isteme, düzeltme, silme vb.) için yukarıdaki e-posta adresine başvurabilirsiniz. Başvurular en geç 30 gün içinde cevaplanır.</p><p>Verileriniz pazarlama amacıyla kullanılmaz.</p></div>'+
 '</div></div>';
 doc.body.appendChild(w);
 var fab=$('spFab'),dr=$('spDrawer');
@@ -90,6 +116,8 @@ function openD(o){dr.hidden=!o;fab.setAttribute('aria-expanded',o);if(o)$('spClo
 fab.onclick=function(){openD(true);};
 doc.querySelectorAll('[data-sepet-ac]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openD(true);});});
 if(root.location&&root.location.hash==='#sepet')openD(true);root.addEventListener('hashchange',function(){if(root.location.hash==='#sepet')openD(true);});$('spClose').onclick=function(){openD(false);};
+$('spSend').addEventListener('click',function(){if(this.getAttribute('aria-disabled')==='true')return;try{this.href=gonderTikla(state(),$('spWeb').value);}catch(e){}});
+$('spKvkkBtn').onclick=function(){var k=$('spKvkk'),o=k.hidden;k.hidden=!o;this.setAttribute('aria-expanded',o);if(o)k.focus();};
 dr.addEventListener('keydown',function(e){if(e.key==='Escape')openD(false);});
 dr.addEventListener('click',function(e){if(e.target===dr)openD(false);});
 $('spZone').onchange=function(){S.zone=this.value===''?null:+this.value;S.km=null;S.loc=null;$('spLocWrap').hidden=true;$('spShare').checked=false;render();};

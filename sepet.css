@@ -20,3 +20,7 @@
 .sp-send{display:block;text-align:center;width:100%}.sp-send.is-off{opacity:.45;pointer-events:none;box-shadow:none}
 @media(min-width:760px){.sp-drawer{align-items:center}.sp-panel{border-radius:var(--r)}}
 .sp-chk[hidden]{display:none!important}
+
+.sp-sendrow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}.sp-sendrow .sp-send{flex:1 1 200px;width:auto}.sp-kvkk-btn{flex:0 0 auto;text-decoration:underline}.sp-kvkk-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}.sp-kvkk{margin-top:10px;padding:10px;border:1px solid rgba(0,0,0,.15);border-radius:8px;background:rgba(255,255,255,.6)}.sp-kvkk h3{font-size:1rem;margin:0 0 6px}.sp-kvkk p{margin:0 0 6px}
+
+.sp-hp{position:absolute!important;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
