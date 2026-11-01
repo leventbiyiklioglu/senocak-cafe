@@ -149,7 +149,7 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
 '<ul id="spErr" class="sp-err" aria-live="polite"></ul><p id="spSunucu" class="sp-err" role="alert"></p><div class="sp-sendrow"><button type="button" id="spSend" class="btn sp-send" aria-disabled="true">📨 Siparişi gönder</button></div>'+
 '<div id="spOk" class="sp-ok-kutu" role="status" hidden><p class="sp-ok-b">✅ Siparişiniz alındı<span id="spNo"></span></p><p class="sp-small">Hazırlamaya başlıyoruz; gerekirse sizi arayacağız. Ödeme kapıda (nakit/kart).</p><p class="sp-small sp-izle">Sipariş durumu bu ekranda izlenemez; gerekirse bizi arayın: <a href="'+CFG.telefonHref+'">'+CFG.telefon+'</a></p>'+
-'<a id="spWa2" class="btn sp-wa2" target="_blank" rel="noopener">💬 WhatsApp\'a da gönder (isteğe bağlı)</a><button type="button" id="spYeni" class="sp-btn sp-wide">Tamam</button></div>'+
+'<a id="spWa2" class="btn sp-wa2" target="_blank" rel="noopener">💬 WhatsApp\'a da gönder (isteğe bağlı)</a><a id="spRozet" class="btn sp-rozet" href="https://fis.senocakcafe.com/sadakat-hesap/#katil" target="_blank" rel="noopener noreferrer">⭐ Rozetlerim için kayıt ol</a><button type="button" id="spYeni" class="sp-btn sp-wide">Tamam</button></div>'+
 '</div></div>';
 doc.body.appendChild(w);
 var fab=$('spFab'),dr=$('spDrawer');

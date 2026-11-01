@@ -42,3 +42,4 @@ button.sp-send{border:0;cursor:pointer;font:inherit}
 .sp-wa2{display:block;text-align:center;margin:10px 0 8px;background:#25d366;color:#08310f}
 #spSend[hidden],.sp-ok-kutu[hidden]{display:none!important}
 .sp-ara{margin:0 0 8px;padding:8px 10px;border-radius:8px;background:#fff3cd;font-weight:700}.sp-ara a{color:inherit;text-decoration:underline;white-space:nowrap}.sp-izle a{font-weight:700;white-space:nowrap}
+.sp-rozet{display:block;text-align:center;margin:8px 0;background:#e0a53a;color:#3b2418;font-weight:800}
