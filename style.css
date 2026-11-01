@@ -90,3 +90,6 @@ footer{text-align:center;padding:26px 18px;color:var(--coffee);font-size:.9rem}
 .sss-item summary{cursor:pointer;font-weight:700;color:var(--coffee)}
 .sss-item p{margin:10px 0 0;line-height:1.6}
 .alg{display:flex;gap:4px;margin-top:4px}.alg abbr{font-size:.68rem;font-weight:700;text-decoration:none;border:1px solid #c9a98a;color:#7a604c;border-radius:4px;padding:0 4px;line-height:1.4}
+.links a.links-sadakat{color:var(--gold)}
+.sadakat-serit{display:block;text-align:center;padding:7px 12px;background:var(--gold);color:#3b2418;font-weight:800;font-size:.9rem;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(min-width:700px){.sadakat-serit{display:none}}
