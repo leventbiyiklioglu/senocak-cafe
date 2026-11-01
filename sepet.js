@@ -3,7 +3,7 @@
    FIS_SUNUCU_URL doluysa sipariş kopyası arka planda geçici aktarım sunucusuna gider (fiş basılınca/en geç 3 saatte silinir). */
 (function(root){
 'use strict';
-var CFG={
+var CFG={sifirlaMs:400,
   waNumber:'902128857039',
   FIS_SUNUCU_URL:'https://fis.senocakcafe.com/siparis',
   cafe:{lat:41.03898,lng:28.430606},
@@ -70,7 +70,9 @@ function varsayilanTasiyici(url,body){
   return fetch(url,{method:'POST',body:body,keepalive:true,mode:'cors',credentials:'omit',headers:{'content-type':'text/plain;charset=UTF-8'},signal:ac?ac.signal:undefined});}
 /* Gönder tıklaması: önce (senkron) kopyayı tetikle, sonra WhatsApp URL'sini döndür — sunucu ne olursa olsun. */
 function gonderTikla(st,tuzak,url,tasiyici){fisGonder(st,tuzak,url,tasiyici);return waUrl(st);}
-var API={fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,gonderTikla:gonderTikla,CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
+function tekSeferlik(){var kilitli=false;return {al:function(){if(kilitli)return false;kilitli=true;return true;},birak:function(){kilitli=false;},kilitliMi:function(){return kilitli;}};}
+function gonderVeSifirla(st,tuzak,url,tasiyici,sifirla,zamanla){var href=gonderTikla(st,tuzak,url,tasiyici);(zamanla||setTimeout)(sifirla,CFG.sifirlaMs);return href;}
+var API={fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,gonderTikla:gonderTikla,tekSeferlik:tekSeferlik,gonderVeSifirla:gonderVeSifirla,CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
 if(typeof module!=='undefined'&&module.exports){module.exports=API;return;}
 
 /* ---------- Arayüz ---------- */
@@ -118,7 +120,12 @@ function openD(o){dr.hidden=!o;fab.setAttribute('aria-expanded',o);if(o)$('spClo
 fab.onclick=function(){openD(true);};
 doc.querySelectorAll('[data-sepet-ac]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openD(true);});});
 if(root.location&&root.location.hash==='#sepet')openD(true);root.addEventListener('hashchange',function(){if(root.location.hash==='#sepet')openD(true);});$('spClose').onclick=function(){openD(false);};
-$('spSend').addEventListener('click',function(){if(this.getAttribute('aria-disabled')==='true')return;try{this.href=gonderTikla(state(),$('spWeb').value);}catch(e){}});
+var gonderKilit=tekSeferlik(),bekleyenSifirla=false;
+function sepetiSifirla(){cart.length=0;$('spNote').value='';$('spAydin').checked=false;$('spWeb').value='';bekleyenSifirla=false;gonderKilit.birak();if(!dr.hidden)openD(false);render();}
+$('spSend').addEventListener('click',function(e){if(this.getAttribute('aria-disabled')==='true'||!gonderKilit.al()){e.preventDefault();return;}
+  bekleyenSifirla=true;try{this.href=gonderVeSifirla(state(),$('spWeb').value,undefined,undefined,sepetiSifirla);}catch(x){root.setTimeout(sepetiSifirla,CFG.sifirlaMs);}});
+root.addEventListener('pageshow',function(){if(bekleyenSifirla)sepetiSifirla();});
+root.sepetiSifirla=sepetiSifirla;
 dr.addEventListener('keydown',function(e){if(e.key==='Escape')openD(false);});
 dr.addEventListener('click',function(e){if(e.target===dr)openD(false);});
 $('spZone').onchange=function(){S.zone=this.value===''?null:+this.value;S.km=null;S.loc=null;$('spLocWrap').hidden=true;$('spShare').checked=false;render();};
