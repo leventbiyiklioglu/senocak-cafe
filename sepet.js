@@ -1,6 +1,6 @@
 /* Şenocak Cafe – Sepet → WhatsApp (+ isteğe bağlı fiş aktarım sunucusu).
    Tarayıcıda hiçbir şey kaydedilmez (localStorage/sessionStorage/çerez YOK). Her şey bellekte.
-   FIS_SUNUCU_URL doluysa sipariş kopyası arka planda geçici aktarım sunucusuna gider (fiş basılınca/en geç 3 saatte silinir). */
+   FIS_SUNUCU_URL doluysa sipariş kopyası arka planda geçici aktarım sunucusuna gider (teslim edilince/en geç 3 saatte silinir). */
 (function(root){
 'use strict';
 var CFG={sifirlaMs:400,
@@ -108,7 +108,7 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<label for="spAddr">Açık adres *</label><textarea id="spAddr" rows="3" autocomplete="street-address" required></textarea>'+
 '<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2" aria-describedby="spNoteUyari"></textarea><p id="spNoteUyari" class="sp-small">⚠️ Lütfen nota sağlık bilgisi (alerji, hastalık vb.) yazmayınız; alerjen sorularınız için bizi telefonla arayın: 0212 885 70 39.</p>'+
 '<div class="sp-hp" aria-hidden="true"><label for="spWeb">Web siteniz (boş bırakın)</label><input id="spWeb" name="website" type="text" tabindex="-1" autocomplete="off"></div></fieldset>'+
-'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizin hazırlanması ve teslimi için kullanılır: WhatsApp mesajına eklenir ve mutfakta fiş basılabilmesi için geçici bir aktarım sunucusundan geçer (fiş basılınca, en geç 3 saatte silinir). Site tarayıcınızda kayıt tutmaz. Konum eklemek isteğe bağlıdır.</p>'+
+'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizin hazırlanması ve teslimi için kullanılır: WhatsApp mesajına eklenir ve mutfakta fiş basılabilmesi için geçici bir aktarım sunucusundan geçer (sipariş teslim edilince hemen, en geç 3 saatte silinir). Site tarayıcınızda kayıt tutmaz. Konum eklemek isteğe bağlıdır.</p>'+
 '<label class="sp-chk sp-aydin"><input type="checkbox" id="spAydin"> <span><a href="aydinlatma.html" target="_blank" rel="noopener">Aydınlatma Metni</a>&#39;ni okudum ve inceledim. * <small>(rıza beyanı değildir, yalnızca bilgilendirme)</small></span></label>'+
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
 '<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a></div>'+
