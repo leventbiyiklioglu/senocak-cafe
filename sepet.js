@@ -27,7 +27,10 @@ function normPhone(p){var d=String(p||'').replace(/\D/g,'');if(d.indexOf('90')==
   return /^0[2-5]\d{9}$/.test(d)?d:null;}
 function validate(st){ // st:{items,zone,name,phone,address,now}
   var r=[];var t=total(st.items);
-  if(!isOpen(st.now))r.push('Kapalıyız, 09:00–19:00');
+  /* 01.11.2026: sunucu durumu (/durum) geldiyse o karar verir; gelmediyse (404/ağ hatası) eski saat kuralı. */
+  if(st.durum&&typeof st.durum.acik==='boolean'){if(st.durum.acik===false)r.push(String(st.durum.mesaj||'Şu an kapalıyız.'));}
+  else if(!isOpen(st.now))r.push('Kapalıyız, 09:00–19:00');
+  var tk=st.tukenen||[];st.items.forEach(function(i){if(tk.indexOf(i.name)>=0)r.push(i.name+' şu an tükendi — sepetten çıkarın');});
   if(!st.items.length)r.push('Sepetiniz boş');
   if(st.zone===-1)r.push('Bu konuma teslimat yok');
   else if(st.zone==null)r.push('Teslimat mesafesini seçin');
@@ -76,7 +79,7 @@ var API={fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,g
 if(typeof module!=='undefined'&&module.exports){module.exports=API;return;}
 
 /* ---------- Arayüz ---------- */
-var doc=root.document, cart=[], S={zone:null,km:null,loc:null};
+var doc=root.document, cart=[], S={zone:null,km:null,loc:null,durum:null,tukenen:[]};
 function $(id){return doc.getElementById(id);}
 function find(n){for(var i=0;i<cart.length;i++)if(cart[i].name===n)return cart[i];}
 function setQty(name,kurus,q){var it=find(name);if(!it){if(q<=0)return;it={name:name,kurus:kurus,qty:0};cart.push(it);}
@@ -135,14 +138,14 @@ $('spGeo').onclick=function(){var m=$('spZoneMsg');
     $('spZone').value=String(S.zone);$('spLocWrap').hidden=false;render();},
    function(){m.textContent='Konum izni verilmedi, lütfen mesafeyi listeden seçin.';},{enableHighAccuracy:false,timeout:10000,maximumAge:0});};
 ['spName','spPhone','spAddr','spNote','spShare','spAydin'].forEach(function(id){$(id).addEventListener('input',render);$(id).addEventListener('change',render);});
-function state(){return {items:cart,zone:S.zone,km:S.km,loc:S.loc,shareLoc:$('spShare').checked,name:$('spName').value,phone:$('spPhone').value,address:$('spAddr').value,note:$('spNote').value,aydinlatma:$('spAydin').checked,now:new Date()};}
+function state(){return {durum:S.durum,tukenen:S.tukenen,items:cart,zone:S.zone,km:S.km,loc:S.loc,shareLoc:$('spShare').checked,name:$('spName').value,phone:$('spPhone').value,address:$('spAddr').value,note:$('spNote').value,aydinlatma:$('spAydin').checked,now:new Date()};}
 function render(){
   var t=total(cart),n=cart.reduce(function(s,i){return s+i.qty;},0);
   $('spCount').textContent=n;$('spFabTot').textContent=fmt(t);$('spTot').textContent=fmt(t);
   doc.querySelectorAll('.sp-add').forEach(function(b){var it=find(b.dataset.name),q=b.querySelector('.sp-qty');if(!q)return;
     q.hidden=!it;b.querySelector('.sp-addbtn').hidden=!!it;b.querySelector('output').textContent=it?it.qty:0;});
   $('spList').innerHTML='';cart.forEach(function(i){var li=doc.createElement('li');li.textContent=i.name+' × '+i.qty+' — '+fmt(i.kurus*i.qty);$('spList').appendChild(li);});
-  var st=state();$('spHours').textContent=isOpen(st.now)?'Açığız (09:00–19:00)':'Kapalıyız, 09:00–19:00';
+  var st=state();$('spHours').textContent=S.durum?(S.durum.acik?'Açığız — siparişinizi gönderebilirsiniz':(S.durum.mesaj||'Şu an kapalıyız.')):(isOpen(st.now)?'Açığız (09:00–19:00)':'Kapalıyız, 09:00–19:00');
   var zm=$('spZoneMsg');if(S.zone===-1)zm.textContent='Bu konuma teslimat yok'+(S.km!=null?' (~'+S.km.toFixed(1).replace('.',',')+' km)':'');
   else if(S.zone!=null)zm.textContent=(S.km!=null?'Mesafe ~'+S.km.toFixed(1).replace('.',',')+' km · ':'')+'Minimum sipariş '+fmt(CFG.zones[S.zone].min*100);
   var errs=validate(st),a=$('spSend'),e=$('spErr');e.innerHTML='';
@@ -150,4 +153,20 @@ function render(){
   if(errs.length){a.removeAttribute('href');a.setAttribute('aria-disabled','true');a.classList.add('is-off');}
   else{a.href=waUrl(st);a.setAttribute('aria-disabled','false');a.classList.remove('is-off');}}
 setInterval(render,60000);render();
+/* 01.11.2026: sunucu durumu (/durum): açık/kapalı + tükenenler, 60 sn'de bir. 404/ağ hatası/zaman aşımı/bozuk yanıt → hiçbir şey değişmez (eski saat kuralı, ürünler görünür). */
+function durumUrl(){var u=String(CFG.FIS_SUNUCU_URL||'').trim();return /\/siparis$/.test(u)?u.replace(/\/siparis$/,'/durum'):'';}
+var bant=doc.createElement('div');bant.id='spBant';bant.className='sp-bant';bant.setAttribute('role','status');bant.hidden=true;doc.body.insertBefore(bant,doc.body.firstChild);
+function urunGizle(){
+  doc.querySelectorAll('.cat li').forEach(function(li){var h=li.querySelector('h4');if(!h)return;var g=S.tukenen.indexOf(h.textContent.trim())>=0;li.hidden=g;li.classList.toggle('sp-gizli',g);});
+  doc.querySelectorAll('.cat').forEach(function(sec){var bos=!sec.querySelector('li:not([hidden])');sec.hidden=bos;
+    if(sec.id)doc.querySelectorAll('#catnav a[href="#'+sec.id+'"]').forEach(function(a){a.hidden=bos;});});}
+function durumUygula(){var k=!!(S.durum&&S.durum.acik===false);
+  doc.querySelectorAll('.sp-add .sp-addbtn,.sp-add .sp-p').forEach(function(x){x.disabled=k;});
+  bant.hidden=!k;bant.textContent=k?'🔒 '+(S.durum.mesaj||'Şu an kapalıyız.')+' Menüyü inceleyebilirsiniz.':'';doc.body.classList.toggle('sp-kapali',k);urunGizle();}
+function durumYukle(){var u=durumUrl();if(!u||typeof fetch!=='function')return;
+  var ac=typeof AbortController==='function'?new AbortController():null,z=root.setTimeout(function(){if(ac)ac.abort();},5000);
+  fetch(u,{credentials:'omit',cache:'no-store',signal:ac?ac.signal:undefined}).then(function(r){return r.ok?r.json():null;}).then(function(j){root.clearTimeout(z);
+    if(!j||typeof j.acik!=='boolean')return;
+    S.durum={acik:j.acik,mesaj:String(j.mesaj||'')};S.tukenen=Array.isArray(j.kapali_urunler)?j.kapali_urunler.map(String).slice(0,300):[];durumUygula();render();}).catch(function(){root.clearTimeout(z);});}
+durumYukle();setInterval(durumYukle,60000);
 })(typeof window!=='undefined'?window:this);

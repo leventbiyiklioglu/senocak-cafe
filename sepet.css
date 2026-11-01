@@ -28,3 +28,9 @@
 /* Aydınlatma onayı (01.11.2026) */
 .sp-aydin{font-weight:700;margin-top:6px}.sp-aydin a{color:var(--terra-d)}
 .sp-add [hidden]{display:none!important}
+
+/* Açık/kapalı bandı ve tükenen ürün gizleme (sunucu durumu, 01.11.2026) */
+.sp-bant{position:sticky;top:0;z-index:60;background:var(--terra-d,#a8431f);color:#fff;text-align:center;font-weight:800;font-size:.95rem;padding:10px 12px;line-height:1.3}
+.sp-bant[hidden]{display:none}
+body.sp-kapali .sp-add button:disabled{opacity:.45;cursor:not-allowed}
+.cat[hidden],.cat li[hidden],#catnav a[hidden]{display:none!important}
