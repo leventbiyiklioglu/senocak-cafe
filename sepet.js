@@ -111,7 +111,6 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizin hazırlanması ve teslimi için kullanılır: WhatsApp mesajına eklenir ve mutfakta fiş basılabilmesi için geçici bir aktarım sunucusundan geçer (fiş basılınca, en geç 3 saatte silinir). Site tarayıcınızda kayıt tutmaz. Konum eklemek isteğe bağlıdır.</p>'+
 '<label class="sp-chk sp-aydin"><input type="checkbox" id="spAydin"> <span><a href="aydinlatma.html" target="_blank" rel="noopener">Aydınlatma Metni</a>&#39;ni okudum ve inceledim. * <small>(rıza beyanı değildir, yalnızca bilgilendirme)</small></span></label>'+
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
-'<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
 '<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a></div>'+
 '</div></div>';
 doc.body.appendChild(w);
