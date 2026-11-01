@@ -24,3 +24,6 @@
 .sp-sendrow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}.sp-sendrow .sp-send{flex:1 1 200px;width:auto}.sp-kvkk-btn{flex:0 0 auto;text-decoration:underline}.sp-kvkk-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}.sp-kvkk{margin-top:10px;padding:10px;border:1px solid rgba(0,0,0,.15);border-radius:8px;background:rgba(255,255,255,.6)}.sp-kvkk h3{font-size:1rem;margin:0 0 6px}.sp-kvkk p{margin:0 0 6px}
 
 .sp-hp{position:absolute!important;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+
+/* Aydınlatma onayı (01.11.2026) */
+.sp-aydin{font-weight:700;margin-top:6px}.sp-aydin a{color:var(--terra-d)}

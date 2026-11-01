@@ -5,7 +5,7 @@
 'use strict';
 var CFG={
   waNumber:'902128857039',
-  FIS_SUNUCU_URL:'https://fis.diojennews.com/siparis',
+  FIS_SUNUCU_URL:'https://fis.senocakcafe.com/siparis',
   cafe:{lat:41.03898,lng:28.430606},
   openH:9, closeH:19, tz:'Europe/Istanbul',
   zones:[{max:2,min:300,label:'0–2 km'},{max:5,min:650,label:'2–5 km'},{max:7,min:800,label:'5–7 km'},
@@ -35,6 +35,8 @@ function validate(st){ // st:{items,zone,name,phone,address,now}
   if(!String(st.name||'').trim())r.push('Ad soyad gerekli');
   if(!normPhone(st.phone))r.push('Geçerli bir telefon numarası girin (örn. 0535 123 45 67)');
   if(String(st.address||'').trim().length<10)r.push('Açık adres gerekli');
+  /* Bilgilendirme onayı (KVKK m.10) — açık rıza DEĞİL. Yalnız arayüz true/false verir; alan yoksa (eski çağrılar) kontrol edilmez. */
+  if(st.aydinlatma===false)r.push('Aydınlatma Metnini okuduğunuzu işaretleyin');
   return r;}
 function buildMessage(st){
   var L=['Site siparişi','' ];
@@ -94,7 +96,7 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<div id="spDrawer" class="sp-drawer" role="dialog" aria-modal="true" aria-labelledby="spTitle" hidden><div class="sp-panel">'+
 '<div class="sp-head"><h2 id="spTitle">Sepetim</h2><button type="button" id="spClose" class="sp-btn" aria-label="Sepeti kapat">✕</button></div>'+
 '<p id="spHours" class="sp-info"></p><ul id="spList" class="sp-list"></ul>'+
-'<p class="sp-tot">Toplam: <strong id="spTot">0 ₺</strong></p><p class="sp-info">✅ Teslimat ücretsiz · ⏱️ Tahmini teslimat ~50 dk · 💵 Kapıda ödeme (nakit/kart)</p>'+
+'<p class="sp-tot">Toplam: <strong id="spTot">0 ₺</strong></p><p class="sp-info">✅ Teslimat ücretsiz · ⏱️ Tahmini teslimat 30-50 dk · 💵 Kapıda ödeme (nakit/kart)</p>'+
 '<fieldset><legend>Teslimat mesafesi</legend><button type="button" id="spGeo" class="sp-btn sp-wide">📍 Konumumu kullan</button>'+
 '<label for="spZone">veya mesafeyi seçin</label><select id="spZone"><option value="">Seçiniz</option>'+opts+'</select>'+
 '<p id="spZoneMsg" class="sp-info" aria-live="polite"></p><p class="sp-small">Mesafe kuş uçuşu hesaplanır; sınırda yol mesafesi farklı olabilir, kesin onay siparişte verilir.</p>'+
@@ -102,12 +104,13 @@ w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDr
 '<fieldset><legend>Bilgileriniz</legend><label for="spName">Ad soyad *</label><input id="spName" autocomplete="name" required>'+
 '<label for="spPhone">Telefon *</label><input id="spPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>'+
 '<label for="spAddr">Açık adres *</label><textarea id="spAddr" rows="3" autocomplete="street-address" required></textarea>'+
-'<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2"></textarea>'+
+'<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2" aria-describedby="spNoteUyari"></textarea><p id="spNoteUyari" class="sp-small">⚠️ Lütfen nota sağlık bilgisi (alerji, hastalık vb.) yazmayınız; alerjen sorularınız için bizi telefonla arayın: 0212 885 70 39.</p>'+
 '<div class="sp-hp" aria-hidden="true"><label for="spWeb">Web siteniz (boş bırakın)</label><input id="spWeb" name="website" type="text" tabindex="-1" autocomplete="off"></div></fieldset>'+
-'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Telefon ve adresiniz yalnızca siparişinizin teslimi için WhatsApp mesajına eklenir. Mutfakta fiş basılabilmesi için sipariş bilgileri geçici olarak bir aktarım sunucusundan da geçer; fiş basılınca hemen, basılamazsa en geç 3 saatte silinir. Site bilgilerinizi kalıcı olarak saklamaz. Konum eklemek isteğe bağlıdır. Ayrıntılar: Aydınlatma Metni.</p>'+
+'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizin hazırlanması ve teslimi için kullanılır: WhatsApp mesajına eklenir ve mutfakta fiş basılabilmesi için geçici bir aktarım sunucusundan geçer (fiş basılınca, en geç 3 saatte silinir). Site tarayıcınızda kayıt tutmaz. Konum eklemek isteğe bağlıdır.</p>'+
+'<label class="sp-chk sp-aydin"><input type="checkbox" id="spAydin"> <span><a href="aydinlatma.html" target="_blank" rel="noopener">Aydınlatma Metni</a>&#39;ni okudum ve inceledim. * <small>(rıza beyanı değildir, yalnızca bilgilendirme)</small></span></label>'+
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
-'<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a><button type="button" id="spKvkkBtn" class="sp-btn sp-kvkk-btn" aria-expanded="false" aria-controls="spKvkk">📄 Aydınlatma Metni</button></div>'+
-'<div id="spKvkk" class="sp-kvkk sp-small" role="region" aria-labelledby="spKvkkT" tabindex="-1" hidden><h3 id="spKvkkT">Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni</h3><p><b>Veri sorumlusu:</b> Fatih Şenocak (şahıs işletmesi, Şenocak Cafe), Kamiloba Mah. İstanbul Cad. No:426A, Kumburgaz, Büyükçekmece/İstanbul. E-posta: <a href="mailto:senocakcafekamiloba@gmail.com">senocakcafekamiloba@gmail.com</a></p><p><b>İşlenen veriler:</b> Ad soyad, telefon, açık adres, sipariş içeriği ve varsa sipariş notu. Konumunuz yalnızca &quot;Konumumu WhatsApp mesajına ekle&quot; kutusunu işaretlerseniz mesaja eklenir; aksi hâlde yalnızca cihazınızda mesafe hesabı için kullanılır ve kaydedilmez.</p><p><b>Amaç ve hukuki sebep:</b> Siparişinizin alınması ve teslimi. Bu veriler, sözleşmenin kurulması ve ifası için gerekli olması hukuki sebebine (KVKK m.5/2-c) dayanılarak işlenir. Konum paylaşımı açık rızanıza dayanır; rızanızı vermemeniz siparişinizi engellemez.</p><p><b>Saklama ve aktarım:</b> Bu site bilgilerinizi kalıcı olarak saklamaz; tarayıcınızda da kayıt tutulmaz. Bilgiler, siz gönder dediğinizde WhatsApp (Meta) üzerinden işletmeye iletilir; bu sırada verilerin yurt dışına aktarımı söz konusu olabilir ve WhatsApp&#39;ın kendi gizlilik koşulları geçerlidir. Siparişinizin mutfakta fiş olarak basılabilmesi için sipariş bilgileriniz (ad, telefon, adres, sipariş içeriği, not, varsa konum) şifreli bağlantı ile Cloudflare, Inc. tarafından sağlanan bir aktarım sunucusuna da iletilir. Bu bilgiler fiş basıldığında hemen, basılamazsa en geç 3 saat içinde otomatik olarak silinir. Sunucuya yalnızca işletmemizin yazıcı programı erişebilir; kayıt/istatistik tutulmaz. Hizmet sağlayıcının sunucuları yurt dışında bulunabileceğinden verileriniz KVKK m.9 kapsamında yurt dışına aktarılmış olabilir. Sipariş sohbetleri teslimattan sonra 30 gün saklanır. Fatura ve muhasebe belgeleri ayrıca, yasal süreler boyunca saklanır.</p><p><b>Haklarınız:</b> KVKK m.11 kapsamındaki haklarınız (verilerinizin işlenip işlenmediğini öğrenme, bilgi isteme, düzeltme, silme vb.) için yukarıdaki e-posta adresine başvurabilirsiniz. Başvurular en geç 30 gün içinde cevaplanır.</p><p>Verileriniz pazarlama amacıyla kullanılmaz.</p></div>'+
+'<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
+'<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a></div>'+
 '</div></div>';
 doc.body.appendChild(w);
 var fab=$('spFab'),dr=$('spDrawer');
@@ -116,7 +119,6 @@ fab.onclick=function(){openD(true);};
 doc.querySelectorAll('[data-sepet-ac]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openD(true);});});
 if(root.location&&root.location.hash==='#sepet')openD(true);root.addEventListener('hashchange',function(){if(root.location.hash==='#sepet')openD(true);});$('spClose').onclick=function(){openD(false);};
 $('spSend').addEventListener('click',function(){if(this.getAttribute('aria-disabled')==='true')return;try{this.href=gonderTikla(state(),$('spWeb').value);}catch(e){}});
-$('spKvkkBtn').onclick=function(){var k=$('spKvkk'),o=k.hidden;k.hidden=!o;this.setAttribute('aria-expanded',o);if(o)k.focus();};
 dr.addEventListener('keydown',function(e){if(e.key==='Escape')openD(false);});
 dr.addEventListener('click',function(e){if(e.target===dr)openD(false);});
 $('spZone').onchange=function(){S.zone=this.value===''?null:+this.value;S.km=null;S.loc=null;$('spLocWrap').hidden=true;$('spShare').checked=false;render();};
@@ -126,8 +128,8 @@ $('spGeo').onclick=function(){var m=$('spZoneMsg');
   navigator.geolocation.getCurrentPosition(function(p){S.loc={lat:p.coords.latitude,lng:p.coords.longitude};S.km=haversineKm(CFG.cafe,S.loc);S.zone=zoneFor(S.km);
     $('spZone').value=String(S.zone);$('spLocWrap').hidden=false;render();},
    function(){m.textContent='Konum izni verilmedi, lütfen mesafeyi listeden seçin.';},{enableHighAccuracy:false,timeout:10000,maximumAge:0});};
-['spName','spPhone','spAddr','spNote','spShare'].forEach(function(id){$(id).addEventListener('input',render);$(id).addEventListener('change',render);});
-function state(){return {items:cart,zone:S.zone,km:S.km,loc:S.loc,shareLoc:$('spShare').checked,name:$('spName').value,phone:$('spPhone').value,address:$('spAddr').value,note:$('spNote').value,now:new Date()};}
+['spName','spPhone','spAddr','spNote','spShare','spAydin'].forEach(function(id){$(id).addEventListener('input',render);$(id).addEventListener('change',render);});
+function state(){return {items:cart,zone:S.zone,km:S.km,loc:S.loc,shareLoc:$('spShare').checked,name:$('spName').value,phone:$('spPhone').value,address:$('spAddr').value,note:$('spNote').value,aydinlatma:$('spAydin').checked,now:new Date()};}
 function render(){
   var t=total(cart),n=cart.reduce(function(s,i){return s+i.qty;},0);
   $('spCount').textContent=n;$('spFabTot').textContent=fmt(t);$('spTot').textContent=fmt(t);
