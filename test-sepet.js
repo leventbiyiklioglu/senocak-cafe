@@ -1,0 +1,47 @@
+const a=require('assert'),S=require('./sepet.js');let n=0;const t=(d,f)=>{f();n++;console.log('✓',d);};
+t('fiyat okuma',()=>{a.equal(S.parsePrice('526,50 ₺'),52650);a.equal(S.parsePrice('1.200 ₺'),120000);a.equal(S.parsePrice('63 ₺'),6300);});
+const items=[{name:'Cheeseburger',kurus:31995,qty:2},{name:'Mercimek Çorbası',kurus:16200,qty:1}];
+t('toplam',()=>{a.equal(S.total(items),80190);a.equal(S.fmt(80190),'801,90 ₺');});
+t('bölgeler',()=>{[[0,0],[2,0],[2.01,1],[5,1],[6,2],[7,2],[9,3],[10,3],[15,4],[20,4],[20.1,-1]].forEach(([k,z])=>a.equal(S.zoneFor(k),z,k));});
+t('haversine',()=>{a.equal(S.haversineKm(S.CFG.cafe,S.CFG.cafe),0);const d=S.haversineKm(S.CFG.cafe,{lat:41.03898+0.09,lng:28.430606});a.ok(Math.abs(d-10.007)<0.02,d);});
+const at=(h,m)=>new Date(Date.UTC(2026,9,29,h-3,m));
+t('saat (İstanbul)',()=>{a.ok(!S.isOpen(at(8,59)));a.ok(S.isOpen(at(9,0)));a.ok(S.isOpen(at(18,59)));a.ok(!S.isOpen(at(19,0)));a.ok(!S.isOpen(at(23,0)));});
+t('telefon',()=>{a.equal(S.normPhone('0535 743 06 26'),'05357430626');a.equal(S.normPhone('+90 212 885 70 39'),'02128857039');a.equal(S.normPhone('5357430626'),'05357430626');a.equal(S.normPhone('123'),null);a.equal(S.normPhone('09357430626'),null);});
+const ok={items,zone:1,name:'Ayşe Şık',phone:'0535 743 06 26',address:'Kumburgaz Mah. Çiçek Sk. No:5 D:3',note:'Zil çalmasın',now:at(12,0)};
+t('geçerli sipariş',()=>a.deepEqual(S.validate(ok),[]));
+t('minimum eşik',()=>{a.deepEqual(S.validate({...ok,zone:2}),[]);const r=S.validate({...ok,zone:3});a.deepEqual(r,['Minimum sipariş 1.200 ₺ — 398,10 ₺ eksik']);a.ok(S.validate({...ok,zone:4})[0].includes('2.000 ₺'));a.deepEqual(S.validate({...ok,items:[{name:'x',kurus:30000,qty:1}],zone:0}),[]);});
+t('20 km üzeri',()=>a.ok(S.validate({...ok,zone:-1}).includes('Bu konuma teslimat yok')));
+t('mesafe seçilmedi',()=>a.ok(S.validate({...ok,zone:null}).includes('Teslimat mesafesini seçin')));
+t('kapalı saat',()=>a.ok(S.validate({...ok,now:at(19,30)}).includes('Kapalıyız, 09:00–19:00')));
+t('zorunlu alanlar',()=>{const r=S.validate({...ok,name:' ',phone:'12',address:'kısa'});a.equal(r.length,3);});
+t('WhatsApp URL + Türkçe',()=>{const u=S.waUrl({...ok,km:3.2,loc:{lat:41.05,lng:28.44},shareLoc:false});a.ok(u.startsWith('https://wa.me/902128857039?text='));
+ const m=decodeURIComponent(u.split('text=')[1]);a.ok(m.startsWith('Site siparişi'));['Cheeseburger x 2 x 319,95 ₺ = 639,90 ₺','Toplam: 801,90 ₺','Ad: Ayşe Şık','Telefon: 05357430626','Ödeme: Kapıda ödeme (nakit/kart)','Teslimat bölgesi: 2–5 km','Teslimat: ücretsiz','Not: Zil çalmasın'].forEach(s=>a.ok(m.includes(s),s));
+ a.ok(!m.includes('maps'));a.ok(u.includes('%C5%9F'));a.ok(!/[ çşğüöıİ\n]/.test(u.split('text=')[1]));});
+t('konum yalnız onayla',()=>{const m=S.buildMessage({...ok,loc:{lat:41.05,lng:28.44},shareLoc:true});a.ok(m.includes('https://www.google.com/maps/search/?api=1&query=41.050000,28.440000'));});
+const tamam={...ok,km:3.2,loc:{lat:41.05,lng:28.44},shareLoc:true};const URL_='https://fis.ornek/siparis';
+t('fiş verisi worker biçiminde',()=>{const d=S.fisVeri(tamam);a.equal(d.tel,'05357430626');a.equal(d.saat,'12:00');a.equal(d.tarih,'29.10.2026');a.deepEqual(d.kalemler[0],{ad:'Cheeseburger',adet:2,kurus:31995});a.equal(d.bolge,'2–5 km');a.deepEqual(d.konum,{lat:41.05,lng:28.44});a.equal(d.tuzak,'');a.ok(JSON.stringify(d).length<8000);});
+t('adres boşsa sunucuya istek yok',()=>{let c=0;a.equal(S.fisGonder(tamam,'','',()=>c++),false);a.equal(c,0);a.equal(S.CFG.FIS_SUNUCU_URL,'https://fis.senocakcafe.com/siparis');});
+t('bal küpü doluyken sunucuya gönderilmez, WhatsApp açılır',()=>{let c=0;const u=S.gonderTikla(tamam,'http://spam',URL_,()=>c++);a.equal(c,0);a.equal(u,S.waUrl(tamam));});
+t('sunucu kapalı/hata verirken WhatsApp yine açılır',()=>{a.equal(S.gonderTikla(tamam,'',URL_,()=>{throw new Error('ağ yok');}),S.waUrl(tamam));
+ const r=S.gonderTikla(tamam,'',URL_,()=>Promise.reject(new Error('500')));a.equal(r,S.waUrl(tamam));});
+t('sunucu yavaşken beklenmez',()=>{let body;const u=S.gonderTikla(tamam,'',URL_,(x,b)=>{body=b;return new Promise(()=>{});});a.equal(u,S.waUrl(tamam));a.equal(JSON.parse(body).ad,'Ayşe Şık');});
+// --- Canlı hazırlık 01.11.2026: seçenek/açıklama kodu YOK, süre ve aydınlatma ---
+const fs=require('fs'),src=fs.readFileSync(__dirname+'/sepet.js','utf8');
+t('malzeme seçeneği/açıklama kodu canlı sürümde yok',()=>{a.ok(!/SECENEK|secim|aciklama|fisGovde/.test(src));a.equal('secim' in S.fisVeri(tamam).kalemler[0],false);});
+t('teslimat süresi 30-50 dk',()=>{a.ok(src.includes('Tahmini teslimat 30-50 dk'));a.ok(!src.includes('~50 dk'));});
+t('eski satır içi aydınlatma (30 gün/Cloudflare) kaldırıldı',()=>{a.ok(!/spKvkk|30 gün|Cloudflare/.test(src));a.ok(src.includes('href="aydinlatma.html"'));});
+t('index: footer linki ve ?v=',()=>{const h=fs.readFileSync(__dirname+'/index.html','utf8');a.ok(h.includes('<a href="aydinlatma.html">Aydınlatma Metni</a>'));const v=(h.match(/sepet\.js\?v=([0-9a-z]+)/)||[])[1];a.ok(/^\d{8}[a-z]$/.test(v||''),'sepet.js ?v= yok');a.ok(h.includes('sepet.css?v='+v),'sepet.css ?v= sepet.js ile aynı değil');a.ok(!h.includes('noindex')&&!h.includes('../assets'));});
+t('aydınlatma sayfası indexlenebilir, yer tutucu yok',()=>{const h=fs.readFileSync(__dirname+'/aydinlatma.html','utf8');a.ok(h.includes('rel="canonical" href="https://senocakcafe.com/aydinlatma.html"'));a.ok(!h.includes('noindex')&&!h.includes('../')&&!h.includes('class="dold"')&&!/avukat|DOLDURULACAK|ÖNİZLEME/.test(h));a.ok(h.includes('01.11.2026'));a.ok(h.includes('Keyubu')&&!/[Cc]loudflare/.test(h));});
+t('sitemap',()=>{const s=fs.readFileSync(__dirname+'/sitemap.xml','utf8');a.ok(s.includes('<loc>https://senocakcafe.com/aydinlatma.html</loc><lastmod>2026-11-01</lastmod>'));});
+// --- Aydınlatma bilgilendirme onayı (31.10.2026) ---
+t('aydınlatma kutusu işaretsizse gönderilmez',()=>{a.deepEqual(S.validate({...ok,aydinlatma:false}),['Aydınlatma Metnini okuduğunuzu işaretleyin']);a.deepEqual(S.validate({...ok,aydinlatma:true}),[]);});
+t('aydınlatma onayı WhatsApp/fiş verisine girmez',()=>{const st={...tamam,aydinlatma:true};a.ok(!S.buildMessage(st).includes('ydınlatma'));a.equal('aydinlatma' in S.fisVeri(st),false);});
+t('onay kutusu etiketi: okudum ve inceledim, rıza değil notu',()=>{const src=require('fs').readFileSync(__dirname+'/sepet.js','utf8');a.ok(src.includes("Metni</a>&#39;ni okudum ve inceledim. *"));a.ok(src.includes('rıza beyanı değildir'));a.equal((src.match(/href="aydinlatma\.html"/g)||[]).length,1);});
+console.log(n+' test geçti');
+{const S2=require('./sepet.js');let gonderilen=null,zam=null,sif=0;
+const st={items:[{name:'Kahvaltı Tabağı',kurus:45000,qty:1}],zone:0,km:1,name:'A B',phone:'05321234567',address:'Adres 1',note:'',aydinlatma:true,now:new Date('2026-11-01T09:00:00Z')};
+const href=S2.gonderVeSifirla(st,'','https://x/siparis',(u,b)=>{gonderilen=b;return true;},()=>{sif++;st.items.length=0;},(f,ms)=>{zam=[f,ms];});
+t('gönderim verisi sıfırlamadan önce üretildi',()=>{a.ok(href.includes(encodeURIComponent('Kahvaltı Tabağı')));a.ok(String(gonderilen).includes('Kahvaltı Tabağı'));a.equal(sif,0);});
+t('sıfırlama sonrası kalem 0',()=>{zam[0]();a.equal(sif,1);a.equal(st.items.length,0);a.ok(zam[1]>0);});
+t('çift tıklama tek gönderim',()=>{const k=S2.tekSeferlik();a.equal(k.al(),true);a.equal(k.al(),false);k.birak();a.equal(k.al(),true);});}
+console.log(n+' test (sıfırlama dahil) geçti');
