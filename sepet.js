@@ -3,7 +3,8 @@
    FIS_SUNUCU_URL doluysa sipariş kopyası arka planda geçici aktarım sunucusuna gider (teslim edilince/en geç 3 saatte silinir). */
 (function(root){
 'use strict';
-var CFG={sifirlaMs:400,
+var CFG={sifirlaMs:400,bekleMs:6000,telefon:'0212 885 70 39',telefonHref:'tel:+902128857039',   // sitede yayımlı numara (index.html tel: bağlantısı)
+
   waNumber:'902128857039',
   FIS_SUNUCU_URL:'https://fis.senocakcafe.com/siparis',
   cafe:{lat:41.03898,lng:28.430606},
@@ -23,8 +24,10 @@ function zoneFor(km){for(var i=0;i<CFG.zones.length;i++)if(km<=CFG.zones[i].max)
 function istanbulHour(d){var p=new Intl.DateTimeFormat('en-GB',{timeZone:CFG.tz,hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d);
   var h=+p.find(function(x){return x.type==='hour';}).value%24,m=+p.find(function(x){return x.type==='minute';}).value;return h+m/60;}
 function isOpen(d){var h=istanbulHour(d);return h>=CFG.openH&&h<CFG.closeH;}
-function normPhone(p){var d=String(p||'').replace(/\D/g,'');if(d.indexOf('90')===0&&d.length===12)d=d.slice(2);if(d.length===10)d='0'+d;
-  return /^0[2-5]\d{9}$/.test(d)?d:null;}
+/* TR telefon: 10 hane (alan kodu 2xx/3xx/4xx sabit, 5xx cep + 7 hane). 0/+90/0090/90 öneki, boşluk/tire/parantez/nokta normalize. Tekrarlı sahte (0000…, 1111…) red. Sunucu aynı kuralı uygular. */
+function normPhone(p){var d=String(p||'').replace(/[\s\-().\/]/g,'');if(/^\+90/.test(d))d=d.slice(3);else if(/^0090/.test(d))d=d.slice(4);else if(/^90\d{10}$/.test(d))d=d.slice(2);else if(/^0\d{10}$/.test(d))d=d.slice(1);
+  if(!/^[2-5]\d{9}$/.test(d)||/^(\d)\1{9}$/.test(d)||/^(\d)\1{6}$/.test(d.slice(3)))return null;return '0'+d;}
+function telGoster(d){return d.slice(0,4)+' '+d.slice(4,7)+' '+d.slice(7,9)+' '+d.slice(9);}
 function validate(st){ // st:{items,zone,name,phone,address,now}
   var r=[];var t=total(st.items);
   /* 01.11.2026: sunucu durumu (/durum) geldiyse o karar verir; gelmediyse (404/ağ hatası) eski saat kuralı. */
@@ -36,7 +39,7 @@ function validate(st){ // st:{items,zone,name,phone,address,now}
   else if(st.zone==null)r.push('Teslimat mesafesini seçin');
   else if(t<CFG.zones[st.zone].min*100)r.push('Minimum sipariş '+fmt(CFG.zones[st.zone].min*100)+' — '+fmt(CFG.zones[st.zone].min*100-t)+' eksik');
   if(!String(st.name||'').trim())r.push('Ad soyad gerekli');
-  if(!normPhone(st.phone))r.push('Geçerli bir telefon numarası girin (örn. 0535 123 45 67)');
+  if(!normPhone(st.phone))r.push(String(st.phone||'').trim()?'Geçerli bir telefon numarası girin: cep 05xx xxx xx xx veya sabit hat 0212 xxx xx xx (alan koduyla, 11 hane)':'Telefon numaranızı girin (05xx xxx xx xx veya 0212 xxx xx xx)');
   if(String(st.address||'').trim().length<10)r.push('Açık adres gerekli');
   /* Bilgilendirme onayı (KVKK m.10) — açık rıza DEĞİL. Yalnız arayüz true/false verir; alan yoksa (eski çağrılar) kontrol edilmez. */
   if(st.aydinlatma===false)r.push('Aydınlatma Metnini okuduğunuzu işaretleyin');
@@ -58,7 +61,8 @@ function fisVeri(st,tuzak){ // worker.js gecerli() biçimi (FIS_VERI)
   return {tarih:g('day')+'.'+g('month')+'.'+g('year'),saat:pad2(+g('hour')%24)+':'+g('minute'),ad:String(st.name||'').trim(),tel:normPhone(st.phone)||'',adres:String(st.address||'').trim(),
     kalemler:st.items.map(function(i){return {ad:i.name,adet:i.qty,kurus:i.kurus};}),not:String(st.note||'').trim(),
     bolge:st.zone>=0&&CFG.zones[st.zone]?CFG.zones[st.zone].label:'-',km:st.km!=null?Math.round(st.km*10)/10:null,
-    konum:st.shareLoc&&st.loc?{lat:+st.loc.lat.toFixed(6),lng:+st.loc.lng.toFixed(6)}:null,tuzak:tuzak||''};}
+    konum:st.shareLoc&&st.loc?{lat:+st.loc.lat.toFixed(6),lng:+st.loc.lng.toFixed(6)}:null,tuzak:tuzak||'',
+    sid:st.sid||undefined,sure:typeof st.sure==='number'?Math.round(st.sure):undefined};}   // sid: aynı sipariş tekrar gelirse sunucu bir kez kaydeder; sure: doldurma süresi (sn, bot koruma)
 function fisGonderilsinMi(url,tuzak){return !!String(url||'').trim()&&!String(tuzak||'').trim();}
 /* Sunucuya kopya: hiçbir hata yukarı çıkmaz, hiçbir şey beklenmez. text/plain → CORS ön kontrolü (preflight) yok. */
 function fisGonder(st,tuzak,url,tasiyici){
@@ -73,24 +77,53 @@ function varsayilanTasiyici(url,body){
   return fetch(url,{method:'POST',body:body,keepalive:true,mode:'cors',credentials:'omit',headers:{'content-type':'text/plain;charset=UTF-8'},signal:ac?ac.signal:undefined});}
 /* Gönder tıklaması: önce (senkron) kopyayı tetikle, sonra WhatsApp URL'sini döndür — sunucu ne olursa olsun. */
 function gonderTikla(st,tuzak,url,tasiyici){fisGonder(st,tuzak,url,tasiyici);return waUrl(st);}
+/* 01.11.2026 (sepet-yeni): gönderimde sunucu yanıtı en fazla CFG.bekleMs beklenir.
+   409/423/429 → Türkçe mesaj, WhatsApp AÇILMAZ. 2xx → WhatsApp. Ağ hatası/zaman aşımı/5xx/diğer → WhatsApp açılır + fiş bir kez daha
+   sendBeacon ile denenir (sayfa kapansa da gider; sid sayesinde çift fiş basılmaz). Sipariş asla kaybolmaz. */
+function sidUret(){return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);}
+function yanitKarar(s,j){j=j&&typeof j==='object'?j:{};
+  if(s>=200&&s<300)return {basari:true,wa:false,no:j.no?String(j.no).replace(/[^0-9A-Z]/g,'').slice(0,8):'',mesaj:null};
+  if(s===423)return {wa:false,mesaj:String(j.mesaj||'Şu an sipariş almıyoruz.')+(j.acilis?' Açılış: '+String(j.acilis).slice(0,40)+'.':'')+' Siparişiniz gönderilmedi.'};
+  if(s===409){if(j.hata==='minimum')return {wa:false,mesaj:'Bu bölge için minimum sipariş tutarına ulaşılmadı'+(j.eksik_kurus>0?' ('+fmt(j.eksik_kurus)+' eksik)':'')+'. Siparişiniz gönderilmedi.'};
+    if(j.hata==='bolge')return {wa:false,mesaj:'Teslimat bölgesi konumunuzla uyuşmuyor. Mesafeyi yeniden seçin ya da "Konumumu kullan"a dokunun.'};
+    return {wa:false,mesaj:'Bazı ürünlerin fiyatı veya durumu değişti. Sayfayı yenileyip sepetinizi kontrol edin; siparişiniz gönderilmedi.'};}
+  if(s===400&&j.hata==='telefon')return {wa:false,mesaj:'Telefon numarası geçersiz: 05xx xxx xx xx veya alan koduyla 0212 xxx xx xx biçiminde yazın. Siparişiniz gönderilmedi.'};
+  if(s===429)return {wa:false,mesaj:'Çok sık deneme yapıldı. Birkaç dakika sonra tekrar deneyin ya da bizi arayın: '+CFG.telefon+'.'};
+  return HATA();}
+function HATA(){return {wa:true,tekrar:true,mesaj:'Sunucuya şu an ulaşılamadı. Siparişiniz kaybolmasın diye WhatsApp açılıyor; lütfen mesajı gönderin.'};}
+function okuyanTasiyici(url,body,ms){if(typeof fetch!=='function')return null;
+  var ac=typeof AbortController!=='undefined'?new AbortController():null;if(ac)setTimeout(function(){ac.abort();},ms||CFG.bekleMs);
+  return fetch(url,{method:'POST',body:body,mode:'cors',credentials:'omit',headers:{'content-type':'text/plain;charset=UTF-8'},signal:ac?ac.signal:undefined});}
+/* sonuc({wa:bool,mesaj,tekrar}); tekrarci(url,body) arka plan tekrar denemesi (varsayılan sendBeacon). */
+function siparisGonder(st,tuzak,url,tasiyici,sonuc,tekrarci,zamanla){url=url==null?CFG.FIS_SUNUCU_URL:url;var bitti=false,body;
+  function son(k){if(bitti)return;bitti=true;if(k.tekrar&&body){try{(tekrarci||varsayilanTasiyici)(url,body);}catch(e){}}sonuc(k);}
+  if(!String(url||'').trim())return son({wa:true,tekrar:false,mesaj:null});   // sunucu tanımsız: yalnız WhatsApp
+  if(String(tuzak||'').trim())return son({basari:true,wa:false,no:'',mesaj:null});   // bal küpü: bota başarı göster, hiçbir yere gönderme
+  try{body=JSON.stringify(fisVeri(st,''));var p=(tasiyici||okuyanTasiyici)(url,body,CFG.bekleMs);
+    (zamanla||setTimeout)(function(){son(Object.assign(HATA(),{zamanAsimi:true}));},CFG.bekleMs+300);
+    Promise.resolve(p).then(function(r){if(!r)return son(HATA());
+      return Promise.resolve(r.json?r.json().catch(function(){return null;}):null).then(function(j){son(yanitKarar(r.status,j));});},function(){son(HATA());});
+  }catch(e){son(HATA());}}
 function tekSeferlik(){var kilitli=false;return {al:function(){if(kilitli)return false;kilitli=true;return true;},birak:function(){kilitli=false;},kilitliMi:function(){return kilitli;}};}
 function gonderVeSifirla(st,tuzak,url,tasiyici,sifirla,zamanla){var href=gonderTikla(st,tuzak,url,tasiyici);(zamanla||setTimeout)(sifirla,CFG.sifirlaMs);return href;}
-var API={fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,gonderTikla:gonderTikla,tekSeferlik:tekSeferlik,gonderVeSifirla:gonderVeSifirla,CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
+var API={telGoster:telGoster,HATA:HATA,yanitKarar:yanitKarar,siparisGonder:siparisGonder,sidUret:sidUret,fisVeri:fisVeri,fisGonderilsinMi:fisGonderilsinMi,fisGonder:fisGonder,gonderTikla:gonderTikla,tekSeferlik:tekSeferlik,gonderVeSifirla:gonderVeSifirla,CFG:CFG,parsePrice:parsePrice,fmt:fmt,total:total,haversineKm:haversineKm,zoneFor:zoneFor,isOpen:isOpen,normPhone:normPhone,validate:validate,buildMessage:buildMessage,waUrl:waUrl};
 if(typeof module!=='undefined'&&module.exports){module.exports=API;return;}
 
 /* ---------- Arayüz ---------- */
 var doc=root.document, cart=[], S={zone:null,km:null,loc:null,durum:null,tukenen:[]};
 function $(id){return doc.getElementById(id);}
 function find(n){for(var i=0;i<cart.length;i++)if(cart[i].name===n)return cart[i];}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var ilkEtkilesim=0;   // bot koruma: doldurma süresi (ilk sepete eklemeden gönderime)
 function setQty(name,kurus,q){var it=find(name);if(!it){if(q<=0)return;it={name:name,kurus:kurus,qty:0};cart.push(it);}
-  it.qty=Math.max(0,Math.min(50,q));if(!it.qty)cart.splice(cart.indexOf(it),1);render();}
+  if(!ilkEtkilesim)ilkEtkilesim=Date.now();it.qty=Math.max(0,Math.min(50,q));if(!it.qty)cart.splice(cart.indexOf(it),1);render();}
 doc.querySelectorAll('.cat li').forEach(function(li){
   var h=li.querySelector('h4'),p=li.querySelector('.price');if(!h||!p)return;
   var name=h.textContent.trim(),k=parsePrice(p.textContent);if(k==null)return;
   var box=doc.createElement('div');box.className='sp-add';box.dataset.name=name;
   if(CFG.unavailable.test(name)){box.innerHTML='<span class="sp-na">Şu an satışta değil</span>';li.appendChild(box);return;}
-  box.innerHTML='<button type="button" class="sp-btn sp-addbtn" aria-label="'+name+' sepete ekle">Sepete ekle</button>'+
-   '<span class="sp-qty" hidden><button type="button" class="sp-btn sp-m" aria-label="'+name+' bir azalt">−</button><output aria-live="polite">0</output><button type="button" class="sp-btn sp-p" aria-label="'+name+' bir artır">+</button></span>';
+  box.innerHTML='<button type="button" class="sp-btn sp-addbtn" aria-label="'+esc(name)+' sepete ekle">Sepete ekle</button>'+
+   '<span class="sp-qty" hidden><button type="button" class="sp-btn sp-m" aria-label="'+esc(name)+' bir azalt">−</button><output aria-live="polite">0</output><button type="button" class="sp-btn sp-p" aria-label="'+esc(name)+' bir artır">+</button></span>';
   box.querySelector('.sp-addbtn').onclick=function(){setQty(name,k,1);};
   box.querySelector('.sp-m').onclick=function(){var i=find(name);setQty(name,k,(i?i.qty:0)-1);};
   box.querySelector('.sp-p').onclick=function(){var i=find(name);setQty(name,k,(i?i.qty:0)+1);};
@@ -100,21 +133,23 @@ var w=doc.createElement('div');
 w.innerHTML='<button type="button" id="spFab" class="sp-fab" aria-controls="spDrawer" aria-expanded="false">🛒 Sepet <span id="spCount">0</span> · <span id="spFabTot">0 ₺</span></button>'+
 '<div id="spDrawer" class="sp-drawer" role="dialog" aria-modal="true" aria-labelledby="spTitle" hidden><div class="sp-panel">'+
 '<div class="sp-head"><h2 id="spTitle">Sepetim</h2><button type="button" id="spClose" class="sp-btn" aria-label="Sepeti kapat">✕</button></div>'+
-'<p id="spHours" class="sp-info"></p><ul id="spList" class="sp-list"></ul>'+
+'<p class="sp-ara">📞 Sorun olursa arayın: <a href="'+CFG.telefonHref+'">'+CFG.telefon+'</a></p><p id="spHours" class="sp-info"></p><ul id="spList" class="sp-list"></ul>'+
 '<p class="sp-tot">Toplam: <strong id="spTot">0 ₺</strong></p><p class="sp-info">✅ Teslimat ücretsiz · ⏱️ Tahmini teslimat 30-50 dk · 💵 Kapıda ödeme (nakit/kart)</p>'+
 '<fieldset><legend>Teslimat mesafesi</legend><button type="button" id="spGeo" class="sp-btn sp-wide">📍 Konumumu kullan</button>'+
 '<label for="spZone">veya mesafeyi seçin</label><select id="spZone"><option value="">Seçiniz</option>'+opts+'</select>'+
 '<p id="spZoneMsg" class="sp-info" aria-live="polite"></p><p class="sp-small">Mesafe kuş uçuşu hesaplanır; sınırda yol mesafesi farklı olabilir, kesin onay siparişte verilir.</p>'+
-'<label class="sp-chk" id="spLocWrap" hidden><input type="checkbox" id="spShare"> Konumumu WhatsApp mesajına ekle</label></fieldset>'+
+'<label class="sp-chk" id="spLocWrap" hidden><input type="checkbox" id="spShare"> Konumumu siparişe ekle</label></fieldset>'+
 '<fieldset><legend>Bilgileriniz</legend><label for="spName">Ad soyad *</label><input id="spName" autocomplete="name" required>'+
-'<label for="spPhone">Telefon *</label><input id="spPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>'+
+'<label for="spPhone">Telefon *</label><input id="spPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" maxlength="20" aria-describedby="spPhoneHint" required><small id="spPhoneHint" class="sp-small">Cep veya alan kodlu sabit hat; kurye gerekirse bu numarayı arar.</small>'+
 '<label for="spAddr">Açık adres *</label><textarea id="spAddr" rows="3" autocomplete="street-address" required></textarea>'+
 '<label for="spNote">Not (isteğe bağlı)</label><textarea id="spNote" rows="2" aria-describedby="spNoteUyari"></textarea><p id="spNoteUyari" class="sp-small">⚠️ Lütfen nota sağlık bilgisi (alerji, hastalık vb.) yazmayınız; alerjen sorularınız için bizi telefonla arayın: 0212 885 70 39.</p>'+
 '<div class="sp-hp" aria-hidden="true"><label for="spWeb">Web siteniz (boş bırakın)</label><input id="spWeb" name="website" type="text" tabindex="-1" autocomplete="off"></div></fieldset>'+
-'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizin hazırlanması ve teslimi için kullanılır: WhatsApp mesajına eklenir ve mutfakta fiş basılabilmesi için geçici bir aktarım sunucusundan geçer (sipariş teslim edilince hemen, en geç 3 saatte silinir). Site tarayıcınızda kayıt tutmaz. Konum eklemek isteğe bağlıdır.</p>'+
+'<p class="sp-small sp-priv"><b>Bilgilendirme:</b> Ad, telefon, adres ve sipariş bilgileriniz yalnızca siparişinizi hazırlamak ve teslim etmek için Türkiye\'deki sipariş sunucumuza gönderilir; sipariş teslim edilince hemen, en geç 3 saatte silinir. WhatsApp\'tan göndermek ve konum eklemek isteğe bağlıdır; site tarayıcınızda kayıt tutmaz.</p>'+
 '<label class="sp-chk sp-aydin"><input type="checkbox" id="spAydin"> <span><a href="aydinlatma.html" target="_blank" rel="noopener">Aydınlatma Metni</a>&#39;ni okudum ve inceledim. * <small>(rıza beyanı değildir, yalnızca bilgilendirme)</small></span></label>'+
 '<p class="note alg-legend sp-small">Alerjenler: G Gluten · S Süt · Y Yumurta · Su Susam · KY Kabuklu yemiş (kaju) · H Hardal · * Şarküteri ürünleri süt, soya, hardal ve sülfit içerebilir. Eser miktarda alerjen bulunabilir.</p>'+
-'<ul id="spErr" class="sp-err" aria-live="polite"></ul><div class="sp-sendrow"><a id="spSend" class="btn sp-send" target="_blank" rel="noopener" aria-disabled="true">💬 WhatsApp ile gönder</a></div>'+
+'<ul id="spErr" class="sp-err" aria-live="polite"></ul><p id="spSunucu" class="sp-err" role="alert"></p><div class="sp-sendrow"><button type="button" id="spSend" class="btn sp-send" aria-disabled="true">📨 Siparişi gönder</button></div>'+
+'<div id="spOk" class="sp-ok-kutu" role="status" hidden><p class="sp-ok-b">✅ Siparişiniz alındı<span id="spNo"></span></p><p class="sp-small">Hazırlamaya başlıyoruz; gerekirse sizi arayacağız. Ödeme kapıda (nakit/kart).</p><p class="sp-small sp-izle">Sipariş durumu bu ekranda izlenemez; gerekirse bizi arayın: <a href="'+CFG.telefonHref+'">'+CFG.telefon+'</a></p>'+
+'<a id="spWa2" class="btn sp-wa2" target="_blank" rel="noopener">💬 WhatsApp\'a da gönder (isteğe bağlı)</a><button type="button" id="spYeni" class="sp-btn sp-wide">Tamam</button></div>'+
 '</div></div>';
 doc.body.appendChild(w);
 var fab=$('spFab'),dr=$('spDrawer');
@@ -123,9 +158,19 @@ fab.onclick=function(){openD(true);};
 doc.querySelectorAll('[data-sepet-ac]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();openD(true);});});
 if(root.location&&root.location.hash==='#sepet')openD(true);root.addEventListener('hashchange',function(){if(root.location.hash==='#sepet')openD(true);});$('spClose').onclick=function(){openD(false);};
 var gonderKilit=tekSeferlik(),bekleyenSifirla=false;
-function sepetiSifirla(){cart.length=0;$('spNote').value='';$('spAydin').checked=false;$('spWeb').value='';bekleyenSifirla=false;gonderKilit.birak();if(!dr.hidden)openD(false);render();}
-$('spSend').addEventListener('click',function(e){if(this.getAttribute('aria-disabled')==='true'||!gonderKilit.al()){e.preventDefault();return;}
-  bekleyenSifirla=true;try{this.href=gonderVeSifirla(state(),$('spWeb').value,undefined,undefined,sepetiSifirla);}catch(x){root.setTimeout(sepetiSifirla,CFG.sifirlaMs);}});
+function sepetiSifirla(){cart.length=0;ilkEtkilesim=0;sid=null;$('spOk').hidden=true;$('spSend').hidden=false;$('spErr').hidden=false;$('spSunucu').textContent='';$('spNote').value='';$('spAydin').checked=false;$('spWeb').value='';bekleyenSifirla=false;gonderKilit.birak();if(!dr.hidden)openD(false);render();}
+var sid=null;   // sepet başına tek sipariş kimliği: tekrar/çift tıklamada aynı kimlik gider (sunucu tek kayıt tutar)
+$('spSend').addEventListener('click',function(){var a=this;if(a.getAttribute('aria-disabled')==='true'||!gonderKilit.al())return;
+  var st=state(),wa=waUrl(st);if(!sid)sid=sidUret();st.sid=sid;st.sure=ilkEtkilesim?(Date.now()-ilkEtkilesim)/1000:0;
+  a.setAttribute('aria-disabled','true');a.classList.add('is-off');a.textContent='Gönderiliyor…';$('spSunucu').textContent='';
+  function bitir(){a.textContent='📨 Siparişi gönder';}
+  try{siparisGonder(st,$('spWeb').value,undefined,undefined,function(k){bitir();
+    if(k.basari){$('spNo').textContent=k.no?' · Sipariş no: '+k.no:'';$('spWa2').href=wa;$('spOk').hidden=false;a.hidden=true;$('spErr').hidden=true;$('spOk').scrollIntoView&&$('spOk').scrollIntoView({block:'nearest'});return;}
+    $('spSunucu').textContent=k.mesaj||'';
+    if(!k.wa){gonderKilit.birak();durumYukle();render();return;}   // 409/423/429: WhatsApp açılmaz, sepet korunur
+    bekleyenSifirla=true;root.setTimeout(function(){root.location.href=wa;},900);});}
+  catch(x){bitir();bekleyenSifirla=true;root.location.href=wa;}});
+$('spYeni').onclick=function(){sepetiSifirla();};
 root.addEventListener('pageshow',function(){if(bekleyenSifirla)sepetiSifirla();});
 root.sepetiSifirla=sepetiSifirla;
 dr.addEventListener('keydown',function(e){if(e.key==='Escape')openD(false);});
@@ -137,6 +182,7 @@ $('spGeo').onclick=function(){var m=$('spZoneMsg');
   navigator.geolocation.getCurrentPosition(function(p){S.loc={lat:p.coords.latitude,lng:p.coords.longitude};S.km=haversineKm(CFG.cafe,S.loc);S.zone=zoneFor(S.km);
     $('spZone').value=String(S.zone);$('spLocWrap').hidden=false;render();},
    function(){m.textContent='Konum izni verilmedi, lütfen mesafeyi listeden seçin.';},{enableHighAccuracy:false,timeout:10000,maximumAge:0});};
+$('spPhone').addEventListener('blur',function(){var n=normPhone(this.value);if(n)this.value=telGoster(n);});
 ['spName','spPhone','spAddr','spNote','spShare','spAydin'].forEach(function(id){$(id).addEventListener('input',render);$(id).addEventListener('change',render);});
 function state(){return {durum:S.durum,tukenen:S.tukenen,items:cart,zone:S.zone,km:S.km,loc:S.loc,shareLoc:$('spShare').checked,name:$('spName').value,phone:$('spPhone').value,address:$('spAddr').value,note:$('spNote').value,aydinlatma:$('spAydin').checked,now:new Date()};}
 function render(){
@@ -150,8 +196,9 @@ function render(){
   else if(S.zone!=null)zm.textContent=(S.km!=null?'Mesafe ~'+S.km.toFixed(1).replace('.',',')+' km · ':'')+'Minimum sipariş '+fmt(CFG.zones[S.zone].min*100);
   var errs=validate(st),a=$('spSend'),e=$('spErr');e.innerHTML='';
   errs.forEach(function(x){var li=doc.createElement('li');li.textContent=x;e.appendChild(li);});
-  if(errs.length){a.removeAttribute('href');a.setAttribute('aria-disabled','true');a.classList.add('is-off');}
-  else{a.href=waUrl(st);a.setAttribute('aria-disabled','false');a.classList.remove('is-off');}}
+  if(gonderKilit.kilitliMi())return;   // gönderim sürerken düğme kilitli kalır
+  if(errs.length){a.setAttribute('aria-disabled','true');a.classList.add('is-off');}
+  else{a.setAttribute('aria-disabled','false');a.classList.remove('is-off');}}
 setInterval(render,60000);render();
 /* 01.11.2026: sunucu durumu (/durum): açık/kapalı + tükenenler, 60 sn'de bir. 404/ağ hatası/zaman aşımı/bozuk yanıt → hiçbir şey değişmez (eski saat kuralı, ürünler görünür). */
 function durumUrl(){var u=String(CFG.FIS_SUNUCU_URL||'').trim();return /\/siparis$/.test(u)?u.replace(/\/siparis$/,'/durum'):'';}

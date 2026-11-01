@@ -34,3 +34,11 @@
 .sp-bant[hidden]{display:none}
 body.sp-kapali .sp-add button:disabled{opacity:.45;cursor:not-allowed}
 .cat[hidden],.cat li[hidden],#catnav a[hidden]{display:none!important}
+/* 01.11.2026 sepet-yeni: doğrudan sipariş + "Siparişiniz alındı" + WhatsApp ikinci düğme */
+button.sp-send{border:0;cursor:pointer;font:inherit}
+#spSunucu:empty{display:none}#spSunucu{margin:8px 0;padding:8px 10px;border-radius:8px;background:rgba(180,60,40,.08);list-style:none}
+.sp-ok-kutu{margin-top:10px;padding:12px;border:2px solid #2e7d32;border-radius:10px;background:#eef7ee}
+.sp-ok-b{font-size:1.1rem;font-weight:800;color:#1b5e20;margin:0 0 6px}
+.sp-wa2{display:block;text-align:center;margin:10px 0 8px;background:#25d366;color:#08310f}
+#spSend[hidden],.sp-ok-kutu[hidden]{display:none!important}
+.sp-ara{margin:0 0 8px;padding:8px 10px;border-radius:8px;background:#fff3cd;font-weight:700}.sp-ara a{color:inherit;text-decoration:underline;white-space:nowrap}.sp-izle a{font-weight:700;white-space:nowrap}
