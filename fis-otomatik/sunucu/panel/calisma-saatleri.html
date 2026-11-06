@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Çalışma Saatleri Yönetimi · Şenocak Cafe Panel</title>
+<link rel="stylesheet" href="panel.css">
+<style>
+.p-loader { text-align: center; padding: 60px 20px; }
+.p-loader-spinner { width: 40px; height: 40px; border: 4px solid var(--p-line); 
+  border-top-color: var(--p-terra); border-radius: 50%; animation: spin 0.8s linear infinite; 
+  margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="p-container">
+  <div class="p-header">
+    <h1>⏰ Çalışma Saatleri</h1>
+    <div class="p-nav">
+      <a href="index.html">← Panel Ana Sayfa</a>
+    </div>
+  </div>
+
+  <div id="pYukleniyor" class="p-loader">
+    <div class="p-loader-spinner"></div>
+    <p>Yükleniyor...</p>
+  </div>
+
+  <div id="pHata" class="p-alert p-alert-error p-hidden"></div>
+  <div id="pBasari" class="p-alert p-alert-success p-hidden"></div>
+
+  <div id="pIcerik" class="p-hidden">
+    <!-- Mevcut Durum -->
+    <div class="p-card">
+      <h2>Şu Anki Durum</h2>
+      <div id="pDurum" class="p-loading">Kontrol ediliyor...</div>
+    </div>
+
+    <!-- Geçici Kapalılık -->
+    <div class="p-card">
+      <h2>🔒 Geçici Kapalılık</h2>
+      <div class="p-info-box">
+        <strong>Özel durumlar için</strong> (tadilat, tatil, vb.) kafenin belirli bir süre kapalı kalmasını sağlar. 
+        Normal çalışma saatlerine göre önceliklidir.
+      </div>
+      
+      <div id="pGeciciVar" class="p-hidden">
+        <div class="p-temp-closure">
+          <h3>⚠️ Aktif Geçici Kapalılık</h3>
+          <p><strong>Başlangıç:</strong> <span id="pGeciciBasStr"></span></p>
+          <p><strong>Bitiş:</strong> <span id="pGeciciBitStr"></span></p>
+          <p><strong>Açıklama:</strong> <span id="pGeciciAck"></span></p>
+          <div class="p-btn-group">
+            <button type="button" id="pGeciciDuzenle" class="p-btn p-btn-small">Düzenle</button>
+            <button type="button" id="pGeciciKaldir" class="p-btn p-btn-small p-btn-danger">Kaldır</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="pGeciciYok" class="p-hidden">
+        <p>Şu anda aktif geçici kapalılık yok.</p>
+        <button type="button" id="pGeciciEkle" class="p-btn p-btn-small">+ Yeni Geçici Kapalılık Ekle</button>
+      </div>
+
+      <div id="pGeciciForm" class="p-hidden" style="margin-top: 16px;">
+        <div class="p-field">
+          <label for="pGeciciBas">Başlangıç Tarihi ve Saati (İstanbul) *</label>
+          <input type="datetime-local" id="pGeciciBas" required>
+          <small>Örnek: 06.11.2026 00:00 → girdi: 2026-11-06T00:00</small>
+        </div>
+        <div class="p-field">
+          <label for="pGeciciBit">Bitiş Tarihi ve Saati (İstanbul) *</label>
+          <input type="datetime-local" id="pGeciciBit" required>
+          <small>Örnek: 09.11.2026 12:00 → girdi: 2026-11-09T12:00</small>
+        </div>
+        <div class="p-field">
+          <label for="pGeciciAciklama">Açıklama (isteğe bağlı)</label>
+          <input type="text" id="pGeciciAciklama" placeholder="Örn: Tadilat çalışması">
+        </div>
+        <div class="p-btn-group">
+          <button type="button" id="pGeciciKaydet" class="p-btn">Kaydet</button>
+          <button type="button" id="pGeciciIptal" class="p-btn p-btn-secondary">İptal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gün Gün Çalışma Saatleri -->
+    <div class="p-card">
+      <h2>📅 Gün Gün Çalışma Saatleri</h2>
+      <div class="p-info-box">
+        Her gün için ayrı açılış/kapanış saati belirleyin. Bir günü tamamen kapalı yapmak için 
+        "Bu gün kapalı" kutusunu işaretleyin.
+      </div>
+      
+      <div class="p-grid p-grid-2" id="pGunler">
+        <!-- JavaScript ile doldurulacak -->
+      </div>
+
+      <div class="p-btn-group" style="margin-top: 20px;">
+        <button type="button" id="pGunleriKaydet" class="p-btn">Kaydet</button>
+        <button type="button" id="pGunleriSifirla" class="p-btn p-btn-secondary">Varsayılana Dön (9:00-19:00)</button>
+      </div>
+    </div>
+
+    <!-- Eski Ayarları Göster (Debug) -->
+    <details class="p-card" style="margin-top: 20px;">
+      <summary style="cursor: pointer; font-weight: 600;">🔍 Ham Ayar Verisi (Debug)</summary>
+      <pre id="pHamVeri" style="background: #f5f5f5; padding: 12px; border-radius: 6px; overflow: auto; font-size: 0.85rem;"></pre>
+    </details>
+  </div>
+</div>
+
+<script src="calisma-saatleri.js"></script>
+</body>
+</html>
