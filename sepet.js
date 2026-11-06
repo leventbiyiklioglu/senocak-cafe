@@ -209,7 +209,12 @@ function urunGizle(){
     if(sec.id)doc.querySelectorAll('#catnav a[href="#'+sec.id+'"]').forEach(function(a){a.hidden=bos;});});}
 function durumUygula(){var k=!!(S.durum&&S.durum.acik===false);
   doc.querySelectorAll('.sp-add .sp-addbtn,.sp-add .sp-p').forEach(function(x){x.disabled=k;});
-  bant.hidden=!k;bant.textContent=k?'🔒 '+(S.durum.mesaj||'Şu an kapalıyız.')+' Menüyü inceleyebilirsiniz.':'';doc.body.classList.toggle('sp-kapali',k);urunGizle();}
+  bant.hidden=!k;bant.textContent=k?'🔒 '+(S.durum.mesaj||'Şu an kapalıyız.')+' Menüyü inceleyebilirsiniz.':'';doc.body.classList.toggle('sp-kapali',k);urunGizle();
+  /* 06.11.2026: geçici kapalılıkta hero'daki 'Her gün 09:00–19:00' satırı yanıltmasın — sunucu mesajı gösterilir, açılınca eski metin döner. */
+  var hero=doc.querySelector('.hero .badges li small');if(hero){if(!hero._eski)hero._eski=hero.textContent;
+    var li=hero.parentNode,saat=li.firstChild;if(saat&&saat.nodeType===3){if(saat._eski==null)saat._eski=saat.textContent;
+      if(k&&S.durum&&S.durum.mesaj){saat.textContent='🕘 ';hero.textContent=S.durum.mesaj;}
+      else{saat.textContent=saat._eski;hero.textContent=hero._eski;}}}}
 function durumYukle(){var u=durumUrl();if(!u||typeof fetch!=='function')return;
   var ac=typeof AbortController==='function'?new AbortController():null,z=root.setTimeout(function(){if(ac)ac.abort();},5000);
   fetch(u,{credentials:'omit',cache:'no-store',signal:ac?ac.signal:undefined}).then(function(r){return r.ok?r.json():null;}).then(function(j){root.clearTimeout(z);
