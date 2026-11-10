@@ -1,0 +1,1093 @@
+{
+ "kaynak": "secenekler-v3.csv sha256=01dd3bafb73eb66db9b418ce1db125add7fa75cf8677a78d5b59a2b62df009b4",
+ "kural": "birim = max(0, taban + toplam fark); ayni malzemeden tek secim",
+ "surum": "20261110a",
+ "urunler": {
+  "2-li-hamburger-menu": {
+   "ad": "2'li Hamburger Menü",
+   "secenekler": [
+    {
+     "fark": 400,
+     "fis": "+ Turşu (20 g)",
+     "id": "tursu-ekle",
+     "malzeme": "Turşu",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -350,
+     "fis": "ÇIKAR: Yeşillik",
+     "id": "yesillik-cikar",
+     "malzeme": "Yeşillik",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "3-4-ekmek-arasi-kofte": {
+   "ad": "3/4 Ekmek Arası Köfte",
+   "secenekler": [
+    {
+     "fark": 150,
+     "fis": "+ Soğan (20 g)",
+     "id": "sogan-ekle",
+     "malzeme": "Soğan",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -300,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "akdeniz-bazlama-tost": {
+   "ad": "Akdeniz Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 2800,
+     "fis": "+ Beyaz peynir (30 g)",
+     "id": "beyaz-peynir-ekle",
+     "malzeme": "Beyaz peynir",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -550,
+     "fis": "ÇIKAR: Zeytin",
+     "id": "zeytin-cikar",
+     "malzeme": "Zeytin",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "akdeniz-tostu": {
+   "ad": "Akdeniz Tostu",
+   "secenekler": [
+    {
+     "fark": 2800,
+     "fis": "+ Beyaz peynir (30 g)",
+     "id": "beyaz-peynir-ekle",
+     "malzeme": "Beyaz peynir",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "ayvalik-tostu": {
+   "ad": "Ayvalık Tostu",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "baharatli-patates-kizartmasi-120-gr": {
+   "ad": "Baharatlı Patates Kızartması (120 gr.)",
+   "secenekler": [
+    {
+     "fark": 300,
+     "fis": "+ Cajun/Kaju baharat karışımı (2 g)",
+     "id": "cajun-kaju-baharat-karisimi-ekle",
+     "malzeme": "Cajun/Kaju baharat karışımı",
+     "miktar": "2 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "beyaz-peynirli-domatesli-bazlama-tost": {
+   "ad": "Beyaz Peynirli Domatesli Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 2800,
+     "fis": "+ Beyaz peynir (30 g)",
+     "id": "beyaz-peynir-ekle",
+     "malzeme": "Beyaz peynir",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -550,
+     "fis": "ÇIKAR: Zeytin",
+     "id": "zeytin-cikar",
+     "malzeme": "Zeytin",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "cheeseburger": {
+   "ad": "Cheeseburger",
+   "secenekler": [
+    {
+     "fark": 1000,
+     "fis": "+ Cheddar peyniri (10 g)",
+     "id": "cheddar-peyniri-ekle",
+     "malzeme": "Cheddar peyniri",
+     "miktar": "10 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "cheeseburger-menu": {
+   "ad": "Cheeseburger Menü",
+   "secenekler": [
+    {
+     "fark": 1000,
+     "fis": "+ Cheddar peyniri (10 g)",
+     "id": "cheddar-peyniri-ekle",
+     "malzeme": "Cheddar peyniri",
+     "miktar": "10 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "cift-kasarli-tost": {
+   "ad": "Çift Kaşarlı Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "coban-salata": {
+   "ad": "Çoban Salata",
+   "secenekler": [
+    {
+     "fark": 250,
+     "fis": "+ Salatalık (30 g)",
+     "id": "salatalik-ekle",
+     "malzeme": "Salatalık",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -700,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "gold-burger": {
+   "ad": "Gold Burger",
+   "secenekler": [
+    {
+     "fark": 1000,
+     "fis": "+ Cheddar peyniri (10 g)",
+     "id": "cheddar-peyniri-ekle",
+     "malzeme": "Cheddar peyniri",
+     "miktar": "10 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -550,
+     "fis": "ÇIKAR: Özel sos",
+     "id": "ozel-sos-cikar",
+     "malzeme": "Özel sos",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "gorali-sandvic": {
+   "ad": "Goralı Sandviç",
+   "secenekler": [
+    {
+     "fark": 1350,
+     "fis": "+ Sosis (22 g)",
+     "id": "sosis-ekle",
+     "malzeme": "Sosis",
+     "miktar": "22 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -200,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "hamburger": {
+   "ad": "Hamburger",
+   "secenekler": [
+    {
+     "fark": 400,
+     "fis": "+ Turşu (20 g)",
+     "id": "tursu-ekle",
+     "malzeme": "Turşu",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Yeşillik",
+     "id": "yesillik-cikar",
+     "malzeme": "Yeşillik",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "hamburger-menu": {
+   "ad": "Hamburger Menü",
+   "secenekler": [
+    {
+     "fark": 400,
+     "fis": "+ Turşu (20 g)",
+     "id": "tursu-ekle",
+     "malzeme": "Turşu",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Yeşillik",
+     "id": "yesillik-cikar",
+     "malzeme": "Yeşillik",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "islak-hamburger-menu-ayran": {
+   "ad": "Islak Hamburger Menü (Ayran)",
+   "secenekler": [
+    {
+     "fark": 450,
+     "fis": "+ Islak burger sosu (15 g)",
+     "id": "islak-burger-sosu-ekle",
+     "malzeme": "Islak burger sosu",
+     "miktar": "15 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "islak-hamburger-menu-kola": {
+   "ad": "Islak Hamburger Menü (Kola)",
+   "secenekler": [
+    {
+     "fark": 450,
+     "fis": "+ Islak burger sosu (15 g)",
+     "id": "islak-burger-sosu-ekle",
+     "malzeme": "Islak burger sosu",
+     "miktar": "15 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "ispanakli-kasarli-bazlama-tost": {
+   "ad": "Ispanaklı Kaşarlı Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -1800,
+     "fis": "ÇIKAR: Marine edilmiş ıspanak",
+     "id": "marine-edilmis-ispanak-cikar",
+     "malzeme": "Marine edilmiş ıspanak",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "izgara-kofte": {
+   "ad": "Izgara Köfte",
+   "secenekler": [
+    {
+     "fark": 300,
+     "fis": "+ Köfte sosu (15 g)",
+     "id": "kofte-sosu-ekle",
+     "malzeme": "Köfte sosu",
+     "miktar": "15 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -250,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "izgara-kofte-menu": {
+   "ad": "Izgara Köfte Menü",
+   "secenekler": [
+    {
+     "fark": 300,
+     "fis": "+ Köfte sosu (15 g)",
+     "id": "kofte-sosu-ekle",
+     "malzeme": "Köfte sosu",
+     "miktar": "15 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -550,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "izgara-tavuk": {
+   "ad": "Izgara Tavuk",
+   "secenekler": [
+    {
+     "fark": 1250,
+     "fis": "+ Tavuk (50 g)",
+     "id": "tavuk-ekle",
+     "malzeme": "Tavuk",
+     "miktar": "50 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -250,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "izmir-tostu": {
+   "ad": "İzmir Tostu",
+   "secenekler": [
+    {
+     "fark": 1050,
+     "fis": "+ Yumurta (1 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "1 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "jambonlu-bazlama-tost": {
+   "ad": "Jambonlu Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 3700,
+     "fis": "+ Dana jambon (20 g)",
+     "id": "dana-jambon-ekle",
+     "malzeme": "Dana jambon",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -2200,
+     "fis": "ÇIKAR: Dil peyniri",
+     "id": "dil-peyniri-cikar",
+     "malzeme": "Dil peyniri",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "jambonlu-sandvic": {
+   "ad": "Jambonlu Sandviç",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -100,
+     "fis": "ÇIKAR: Salatalık",
+     "id": "salatalik-cikar",
+     "malzeme": "Salatalık",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "kahvalti-tabagi": {
+   "ad": "Kahvaltı Tabağı",
+   "secenekler": [
+    {
+     "fark": 1050,
+     "fis": "+ Yumurta (1 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "1 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -250,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "karisik-bazlama-tost": {
+   "ad": "Karışık Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -100,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "karisik-sandvic": {
+   "ad": "Karışık Sandviç",
+   "secenekler": [
+    {
+     "fark": 1050,
+     "fis": "+ Yumurta (1 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "1 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "karisik-tost": {
+   "ad": "Karışık Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "kasarli-bazlama-tost": {
+   "ad": "Kaşarlı Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "kasarli-tost": {
+   "ad": "Kaşarlı Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "kavurmali-kasarli-bazlama-tost": {
+   "ad": "Kavurmalı Kaşarlı Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 9100,
+     "fis": "+ Kavurma (30 g)",
+     "id": "kavurma-ekle",
+     "malzeme": "Kavurma",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "kavurmali-tost": {
+   "ad": "Kavurmalı Tost",
+   "secenekler": [
+    {
+     "fark": 9100,
+     "fis": "+ Kavurma (30 g)",
+     "id": "kavurma-ekle",
+     "malzeme": "Kavurma",
+     "miktar": "30 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "kumru-tost": {
+   "ad": "Kumru Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "luks-burger": {
+   "ad": "Lüks Burger",
+   "secenekler": [
+    {
+     "fark": 1000,
+     "fis": "+ Cheddar peyniri (10 g)",
+     "id": "cheddar-peyniri-ekle",
+     "malzeme": "Cheddar peyniri",
+     "miktar": "10 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "mantarli-kasarli-bazlama-tost": {
+   "ad": "Mantarlı Kaşarlı Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "menemen": {
+   "ad": "Menemen",
+   "secenekler": [
+    {
+     "fark": 2100,
+     "fis": "+ Yumurta (2 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "2 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -2500,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "omlet": {
+   "ad": "Omlet",
+   "secenekler": [
+    {
+     "fark": 1050,
+     "fis": "+ Yumurta (1 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "1 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -2850,
+     "fis": "ÇIKAR: Beyaz peynir",
+     "id": "beyaz-peynir-cikar",
+     "malzeme": "Beyaz peynir",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "pastirmali-bazlama-tost": {
+   "ad": "Pastırmalı Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 6750,
+     "fis": "+ Pastırma (20 g)",
+     "id": "pastirma-ekle",
+     "malzeme": "Pastırma",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -2200,
+     "fis": "ÇIKAR: Dil peyniri",
+     "id": "dil-peyniri-cikar",
+     "malzeme": "Dil peyniri",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "patso-sandvic": {
+   "ad": "Patso Sandviç",
+   "secenekler": [
+    {
+     "fark": 400,
+     "fis": "+ Turşu (20 g)",
+     "id": "tursu-ekle",
+     "malzeme": "Turşu",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -250,
+     "fis": "ÇIKAR: Mayonez",
+     "id": "mayonez-cikar",
+     "malzeme": "Mayonez",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "peynirli-sandvic": {
+   "ad": "Peynirli Sandviç",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "piyaz": {
+   "ad": "Piyaz",
+   "secenekler": [
+    {
+     "fark": 150,
+     "fis": "+ Soğan (20 g)",
+     "id": "sogan-ekle",
+     "malzeme": "Soğan",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -250,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "sahanda-yumurta": {
+   "ad": "Sahanda Yumurta",
+   "secenekler": [
+    {
+     "fark": 1050,
+     "fis": "+ Yumurta (1 adet)",
+     "id": "yumurta-ekle",
+     "malzeme": "Yumurta",
+     "miktar": "1 adet",
+     "tip": "ekle"
+    },
+    {
+     "fark": -1400,
+     "fis": "ÇIKAR: Beyaz peynir",
+     "id": "beyaz-peynir-cikar",
+     "malzeme": "Beyaz peynir",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "salamli-kasarli-sandvic": {
+   "ad": "Salamlı Kaşarlı Sandviç",
+   "secenekler": [
+    {
+     "fark": 4600,
+     "fis": "+ Salam (28 g)",
+     "id": "salam-ekle",
+     "malzeme": "Salam",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -100,
+     "fis": "ÇIKAR: Salatalık",
+     "id": "salatalik-cikar",
+     "malzeme": "Salatalık",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "soguk-sandvic": {
+   "ad": "Soğuk Sandviç",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "sosis-tava": {
+   "ad": "Sosis Tava",
+   "secenekler": [
+    {
+     "fark": 1350,
+     "fis": "+ Sosis (22 g)",
+     "id": "sosis-ekle",
+     "malzeme": "Sosis",
+     "miktar": "22 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -350,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "sosisli-sandvic": {
+   "ad": "Sosisli Sandviç",
+   "secenekler": [
+    {
+     "fark": 1350,
+     "fis": "+ Sosis (22 g)",
+     "id": "sosis-ekle",
+     "malzeme": "Sosis",
+     "miktar": "22 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -100,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "sucuklu-tost": {
+   "ad": "Sucuklu Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "yarim-ekmek-arasi-karisik-tost": {
+   "ad": "Yarım Ekmek Arası Karışık Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -1850,
+     "fis": "ÇIKAR: Kaşar peyniri",
+     "id": "kasar-peyniri-cikar",
+     "malzeme": "Kaşar peyniri",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "yarim-ekmek-arasi-kasarli-tost": {
+   "ad": "Yarım Ekmek Arası Kaşarlı Tost",
+   "secenekler": [
+    {
+     "fark": 1600,
+     "fis": "+ Kaşar peyniri (20 g)",
+     "id": "kasar-peyniri-ekle",
+     "malzeme": "Kaşar peyniri",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": 250,
+     "fis": "+ Ketçap (15 g)",
+     "id": "ketcap-ekle",
+     "malzeme": "Ketçap",
+     "miktar": "15 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "yarim-ekmek-arasi-kofte": {
+   "ad": "Yarım Ekmek Arası Köfte",
+   "secenekler": [
+    {
+     "fark": 150,
+     "fis": "+ Soğan (20 g)",
+     "id": "sogan-ekle",
+     "malzeme": "Soğan",
+     "miktar": "20 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -200,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "yarim-ekmek-arasi-sucuklu-tost": {
+   "ad": "Yarım Ekmek Arası Sucuklu Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": 250,
+     "fis": "+ Ketçap (15 g)",
+     "id": "ketcap-ekle",
+     "malzeme": "Ketçap",
+     "miktar": "15 g",
+     "tip": "ekle"
+    }
+   ]
+  },
+  "yarim-ekmek-arasi-tavuk": {
+   "ad": "Yarım Ekmek Arası Tavuk",
+   "secenekler": [
+    {
+     "fark": 1250,
+     "fis": "+ Tavuk (50 g)",
+     "id": "tavuk-ekle",
+     "malzeme": "Tavuk",
+     "miktar": "50 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -200,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "yengen-bazlama-tost": {
+   "ad": "Yengen Bazlama Tost",
+   "secenekler": [
+    {
+     "fark": 4950,
+     "fis": "+ Sucuk (28 g)",
+     "id": "sucuk-ekle",
+     "malzeme": "Sucuk",
+     "miktar": "28 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -450,
+     "fis": "ÇIKAR: Domates",
+     "id": "domates-cikar",
+     "malzeme": "Domates",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  },
+  "zuhtu-sandvic": {
+   "ad": "Zühtü Sandviç",
+   "secenekler": [
+    {
+     "fark": 1350,
+     "fis": "+ Sosis (22 g)",
+     "id": "sosis-ekle",
+     "malzeme": "Sosis",
+     "miktar": "22 g",
+     "tip": "ekle"
+    },
+    {
+     "fark": -150,
+     "fis": "ÇIKAR: Turşu",
+     "id": "tursu-cikar",
+     "malzeme": "Turşu",
+     "miktar": null,
+     "tip": "cikar"
+    }
+   ]
+  }
+ }
+}

@@ -43,3 +43,22 @@ button.sp-send{border:0;cursor:pointer;font:inherit}
 #spSend[hidden],.sp-ok-kutu[hidden]{display:none!important}
 .sp-ara{margin:0 0 8px;padding:8px 10px;border-radius:8px;background:#fff3cd;font-weight:700}.sp-ara a{color:inherit;text-decoration:underline;white-space:nowrap}.sp-izle a{font-weight:700;white-space:nowrap}
 .sp-rozet{display:block;text-align:center;margin:8px 0;background:#e0a53a;color:#3b2418;font-weight:800}
+
+/* Malzeme seçenekleri (10.11.2026) */
+.sp-opts{flex-basis:100%;border:1px solid var(--line);border-radius:12px;padding:8px 12px 10px;margin:8px 0 0;background:#fff}
+.sp-opts[hidden]{display:none}
+.sp-opts legend{font-weight:800;font-size:.9rem;padding:0 4px}
+.sp-opt{display:flex;align-items:center;gap:10px;min-height:44px;font-size:.95rem;cursor:pointer}
+.sp-opt input{width:22px;height:22px;flex:0 0 auto}
+.sp-opt span{flex:1 1 auto;min-width:0}
+.sp-opt-fark{white-space:nowrap}
+.sp-opt-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.sp-opt-ok{flex:1 1 180px;min-height:44px;cursor:pointer;border:0;font:inherit;font-weight:800;padding:10px 18px}
+.sp-opt-ok:disabled{opacity:.45;cursor:not-allowed}
+.sp-opt-iptal{flex:0 0 auto}
+.sp-rozet-adet{align-self:center;margin-right:10px;font-size:.85rem;font-weight:800;color:var(--terra-d)}
+.sp-rozet-adet[hidden]{display:none}
+.sp-line{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.sp-line-ad{flex:1 1 200px;min-width:0}
+.sp-line-sec{flex-basis:100%;order:3;font-size:.82rem;color:var(--coffee)}
+.sp-line-q{flex:0 0 auto}

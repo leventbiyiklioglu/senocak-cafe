@@ -27,7 +27,7 @@ t('sunucu kapalı/hata verirken WhatsApp yine açılır',()=>{a.equal(S.gonderTi
 t('sunucu yavaşken beklenmez',()=>{let body;const u=S.gonderTikla(tamam,'',URL_,(x,b)=>{body=b;return new Promise(()=>{});});a.equal(u,S.waUrl(tamam));a.equal(JSON.parse(body).ad,'Ayşe Şık');});
 // --- Canlı hazırlık 01.11.2026: seçenek/açıklama kodu YOK, süre ve aydınlatma ---
 const fs=require('fs'),src=fs.readFileSync(__dirname+'/sepet.js','utf8');
-t('malzeme seçeneği/açıklama kodu canlı sürümde yok',()=>{a.ok(!/SECENEK|secim|aciklama|fisGovde/.test(src));a.equal('secim' in S.fisVeri(tamam).kalemler[0],false);});
+t('seçeneksiz kalemde secim alanı yok; açıklama kodu yok (10.11.2026: seçenekler eklendi)',()=>{a.ok(!/aciklama|fisGovde/.test(src));a.equal('secim' in S.fisVeri(tamam).kalemler[0],false);});
 t('teslimat süresi 30-50 dk',()=>{a.ok(src.includes('Tahmini teslimat 30-50 dk'));a.ok(!src.includes('~50 dk'));});
 t('eski satır içi aydınlatma (30 gün/Cloudflare) kaldırıldı',()=>{a.ok(!/spKvkk|30 gün|Cloudflare/.test(src));a.ok(src.includes('href="aydinlatma.html"'));});
 t('index: footer linki ve ?v=',()=>{const h=fs.readFileSync(__dirname+'/index.html','utf8');a.ok(h.includes('<a href="aydinlatma.html">Aydınlatma Metni</a>'));const v=(h.match(/sepet\.js\?v=([0-9a-z]+)/)||[])[1];a.ok(/^\d{8}[a-z]$/.test(v||''),'sepet.js ?v= yok');a.ok(h.includes('sepet.css?v='+v),'sepet.css ?v= sepet.js ile aynı değil');a.ok(!h.includes('noindex')&&!h.includes('../assets'));});
