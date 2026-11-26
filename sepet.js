@@ -11,8 +11,8 @@ var CFG={sifirlaMs:400,bekleMs:6000,telefon:'0212 885 70 39',telefonHref:'tel:+9
   openH:9, closeH:19, tz:'Europe/Istanbul',
   zones:[{max:2,min:300,label:'0–2 km'},{max:5,min:650,label:'2–5 km'},{max:7,min:800,label:'5–7 km'},
          {max:10,min:1200,label:'7–10 km'},{max:20,min:2000,label:'10–20 km'}],
-  // Stok 0 (Levent, 21.10): ayranlı ürünler sepete eklenemez. Stok gelince bu listeyi boşaltın.
-  unavailable:/ayran/i,
+  // Stok 0 (Levent, 21.10): ayranlı ürünler sepete eklenemez. 26.11.2026: Levent "küçük ve büyük ayranları satışa açın" dedi → yalnız 'Ayran (Küçük 180 ml)' ve 'Ayran (Büyük 285 ml)' istisna; Ayran (30 cl.) ve ayranlı menüler hâlâ kapalı.
+  unavailable:/^(?!Ayran \((?:Küçük 180|Büyük 285) ml\)$).*ayran/i,
   // 10.11.2026: ürün seçenekleri (ekle/çıkar). Tek kaynak: /secenekler.json (fiş sunucusundaki menu/secenekler.json ile aynı dosya).
   SECENEK_URL:'secenekler.json?v=20261110a'
 };
